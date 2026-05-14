@@ -1,0 +1,111 @@
+{
+  "competitors": [
+    {
+      "handle": "stroycity_tashkent",
+      "display_name": "StroyCity Tashkent",
+      "bio": "Professional construction & renovation in Tashkent. 12 years experience. 500+ projects completed. Free consultation 📞",
+      "followers_est": 28400,
+      "relevance_score": 94,
+      "reasoning": "Direct competitor — construction services in Tashkent, similar project types, active posting with Reels",
+      "discovery_source": "hashtag_search",
+      "confirmed": false
+    },
+    {
+      "handle": "remont_pro_uz",
+      "display_name": "RemontPro UZ",
+      "bio": "Ремонт квартир и офисов в Ташкенте. Быстро, качественно, по доступным ценам.",
+      "followers_est": 41200,
+      "relevance_score": 91,
+      "reasoning": "High-volume renovation account targeting Tashkent market, running Meta ads",
+      "discovery_source": "ad_library",
+      "confirmed": false
+    },
+    {
+      "handle": "architecture_uz",
+      "display_name": "Architecture UZ",
+      "bio": "Architectural design & construction management. Modern spaces for modern lives. DM for projects.",
+      "followers_est": 67800,
+      "relevance_score": 88,
+      "reasoning": "Premium segment competitor with strong visual content and Reels engagement",
+      "discovery_source": "hashtag_search",
+      "confirmed": false
+    },
+    {
+      "handle": "interior_tashkent",
+      "display_name": "Interior Tashkent Studio",
+      "bio": "Interior design & renovation. Before/after transformations. Based in Tashkent 🏠",
+      "followers_est": 19600,
+      "relevance_score": 85,
+      "reasoning": "Interior-focused but overlaps heavily with renovation audience and hashtags",
+      "discovery_source": "hashtag_search",
+      "confirmed": false
+    },
+    {
+      "handle": "buildmaster_uz",
+      "display_name": "BuildMaster UZ",
+      "bio": "Commercial and residential construction. Turnkey projects. Tashkent & regions.",
+      "followers_est": 12300,
+      "relevance_score": 82,
+      "reasoning": "Commercial + residential mix, strong video content showcasing completed projects",
+      "discovery_source": "ad_library",
+      "confirmed": false
+    },
+    {
+      "handle": "remontkvartir_tz",
+      "display_name": "Ремонт Квартир Ташкент",
+      "bio": "Ремонт и отделка квартир. Работаем по всему Ташкенту. Смета бесплатно!",
+      "followers_est": 8900,
+      "relevance_score": 79,
+      "reasoning": "Direct renovation competitor, growing account, active hashtag use",
+      "discovery_source": "hashtag_search",
+      "confirmed": false
+    },
+    {
+      "handle": "design_house_uz",
+      "display_name": "Design House UZ",
+      "bio": "From concept to completion. Interior & exterior design. Tashkent based.",
+      "followers_est": 33100,
+      "relevance_score": 77,
+      "reasoning": "Strong visual brand, high engagement on before/after content in Tashkent",
+      "discovery_source": "hashtag_search",
+      "confirmed": false
+    },
+    {
+      "handle": "eurostroy_tashkent",
+      "display_name": "EuroStroy Tashkent",
+      "bio": "European-quality construction in Tashkent. Luxury renovation specialists.",
+      "followers_est": 15700,
+      "relevance_score": 74,
+      "reasoning": "Premium segment, different price point but same geographic target",
+      "discovery_source": "ad_library",
+      "confirmed": false
+    },
+    {
+      "handle": "quickfix_uz",
+      "display_name": "QuickFix UZ",
+      "bio": "Fast renovation & repairs. Any room, any budget. Tashkent.",
+      "followers_est": 6200,
+      "relevance_score": 71,
+      "reasoning": "Budget segment competitor, high posting frequency, active engagement",
+      "discovery_source": "hashtag_search",
+      "confirmed": false
+    },
+    {
+      "handle": "smart_build_uz",
+      "display_name": "Smart Build UZ",
+      "bio": "Smart home integration + renovation. Modern construction for modern living.",
+      "followers_est": 22400,
+      "relevance_score": 68,
+      "reasoning": "Tech-forward angle, different niche overlap but targets same homeowner audience",
+      "discovery_source": "hashtag_search",
+      "confirmed": false
+    }
+  ],
+  "meta": {
+    "niche": "construction Tashkent",
+    "location": "Tashkent, Uzbekistan",
+    "total_candidates_scanned": 47,
+    "ai_filtered_to": 10,
+    "mock": true
+  }
+}

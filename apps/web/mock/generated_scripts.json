@@ -1,0 +1,115 @@
+{
+  "scripts": [
+    {
+      "variation": 1,
+      "concept_title": "The Hidden Cost Reveal",
+      "hook_type": "shock",
+      "borrowed_pattern": "Shock hook borrowed from top-performing posts that open with a surprising statistic — triggers curiosity and stops the scroll instantly.",
+      "scenes": [
+        {
+          "timecode": "0:00-0:03",
+          "visual": "Close-up of a calculator showing a large number, then cut to contractor looking stressed",
+          "on_screen_text": "Why your renovation costs 40% more than it should",
+          "audio": "Most people overpay for their renovation — and they have no idea why."
+        },
+        {
+          "timecode": "0:03-0:10",
+          "visual": "Split screen: messy quote document vs clean itemized breakdown",
+          "on_screen_text": "Hidden markups most contractors won't show you",
+          "audio": "Contractors add 15 to 25 percent on top of materials. We don't. Here's what transparent pricing actually looks like."
+        },
+        {
+          "timecode": "0:10-0:20",
+          "visual": "Camera pans across a beautifully completed kitchen renovation",
+          "on_screen_text": "Same quality. Fair price. No surprises.",
+          "audio": "This kitchen in Tashkent was completed in 3 weeks, on budget, with full documentation at every step."
+        },
+        {
+          "timecode": "0:20-0:30",
+          "visual": "Friendly handshake, then logo animation",
+          "on_screen_text": "Get your free estimate today → Link in bio",
+          "audio": "Ready for a renovation that doesn't break the bank? DM us or tap the link in bio for your free estimate."
+        }
+      ],
+      "suggested_audio_style": "Soft instrumental background + clear voiceover",
+      "caption": "Stop overpaying for renovations. We believe in total price transparency — no hidden fees, no markups. See how we're different. 🏗️",
+      "hashtags": ["renovation", "constructiontashkent", "homeimprovement", "transparentpricing", "realestate", "interiordesign", "tashkent", "строительство", "ремонт", "renovation2025"],
+      "thumbnail_idea": "Bold text on dark background: '40% less' with a before/after arrow pointing to a stunning room reveal",
+      "predicted_strength": "hook"
+    },
+    {
+      "variation": 2,
+      "concept_title": "Day in the Life: Project Manager Edition",
+      "hook_type": "story",
+      "borrowed_pattern": "POV/Day-in-life format — creates authentic connection and humanizes the brand. Talking head builds trust faster than any ad copy.",
+      "scenes": [
+        {
+          "timecode": "0:00-0:04",
+          "visual": "POV shot: walking through an active construction site at 7am",
+          "on_screen_text": "POV: You're managing a 3-floor renovation in Tashkent",
+          "audio": "It's 7am. I'm on site number three. This is what it actually looks like to run a renovation project the right way."
+        },
+        {
+          "timecode": "0:04-0:12",
+          "visual": "Quick cuts: checking materials, reviewing blueprints, talking to workers, measuring walls",
+          "on_screen_text": null,
+          "audio": "Quality checks happen twice daily. Materials are verified before they touch the building. Every measurement is logged."
+        },
+        {
+          "timecode": "0:12-0:22",
+          "visual": "Client walkthrough — client smiling and nodding approvingly",
+          "on_screen_text": "Client update call: Day 14 of 21",
+          "audio": "Today is the client walkthrough. They can see progress in real time. No surprises at the end — just results."
+        },
+        {
+          "timecode": "0:22-0:30",
+          "visual": "Finished room reveal with client visibly happy",
+          "on_screen_text": "Your renovation deserves this level of care 👇",
+          "audio": "This is the standard you deserve. Link in bio to start your project."
+        }
+      ],
+      "suggested_audio_style": "Trending upbeat sound (low volume) + authentic voiceover",
+      "caption": "A day on site — because you deserve to see exactly how your project gets built. Transparency isn't a promise. It's our process. 🏠✅",
+      "hashtags": ["constructionlife", "projectmanager", "renovation", "tashkent", "behindthescenes", "homebuilding", "реальнаяжизнь", "строительство", "ремонтквартиры", "qualityconstruction"],
+      "thumbnail_idea": "Candid shot of PM reviewing blueprints on site, text overlay: 'Day 1 vs Day 21'",
+      "predicted_strength": "retention"
+    },
+    {
+      "variation": 3,
+      "concept_title": "The 3-Question Checklist",
+      "hook_type": "question",
+      "borrowed_pattern": "Educational question-hook format — positions brand as expert, delivers immediate value, and earns trust before the CTA. High save/share rate.",
+      "scenes": [
+        {
+          "timecode": "0:00-0:03",
+          "visual": "Direct to camera, clean background",
+          "on_screen_text": "Ask your contractor these 3 questions BEFORE signing",
+          "audio": "Before you sign any renovation contract, ask these 3 questions. If they can't answer, walk away."
+        },
+        {
+          "timecode": "0:03-0:12",
+          "visual": "Text appears on screen as each question is spoken",
+          "on_screen_text": "1. Do you provide itemized material costs?",
+          "audio": "One: Do you provide fully itemized material costs? Any contractor who refuses is hiding markups."
+        },
+        {
+          "timecode": "0:12-0:20",
+          "visual": "Continue direct address",
+          "on_screen_text": "2. Who specifically will be on-site daily? 3. What's your defect warranty?",
+          "audio": "Two: who specifically is on-site every day? Three: what's your warranty on defects? Get this in writing."
+        },
+        {
+          "timecode": "0:20-0:30",
+          "visual": "Soft smile, lean toward camera",
+          "on_screen_text": "We answer all 3 — and put it in your contract 📋",
+          "audio": "We answer all three — in your contract, before day one. Save this for your next contractor meeting."
+        }
+      ],
+      "suggested_audio_style": "Voiceover only — no music, feels more credible",
+      "caption": "Save this before your next renovation. Three questions that separate trustworthy contractors from the rest. 📌",
+      "hashtags": ["constructiontips", "renovationadvice", "homeowner", "tashkent", "contractortips", "realestatetashkent", "remontkvartiry", "строительствосоветы", "howtorenovate", "renovation2025"],
+      "thumbnail_idea": "Bold text: '3 Questions' on a clean white/dark background with a checkmark emoji, no face visible — creates intrigue",
+      "predicted_strength": "cta"
+    }
+  ]
+}

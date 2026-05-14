@@ -1,0 +1,85 @@
+{
+  "total_scanned": 47,
+  "candidates": [
+    {
+      "handle": "stroycity_tashkent",
+      "relevance_score": 94,
+      "reasoning": "Direct competitor — construction services in Tashkent, similar project types, highly active Reels content targeting homeowners",
+      "source": "hashtag_search",
+      "display_name": "StroyCity Tashkent",
+      "followers_est": 28400
+    },
+    {
+      "handle": "remont_pro_uz",
+      "relevance_score": 91,
+      "reasoning": "High-volume renovation account actively running Meta Ads, targets same Tashkent homeowner audience",
+      "source": "ad_library",
+      "display_name": "RemontPro UZ",
+      "followers_est": 41200
+    },
+    {
+      "handle": "architecture_uz",
+      "relevance_score": 88,
+      "reasoning": "Premium architectural design & construction, strong visual content strategy, 67K followers",
+      "source": "hashtag_search",
+      "display_name": "Architecture UZ",
+      "followers_est": 67800
+    },
+    {
+      "handle": "interior_tashkent",
+      "relevance_score": 85,
+      "reasoning": "Interior design + renovation overlap, same geographic target, active before/after content",
+      "source": "hashtag_search",
+      "display_name": "Interior Tashkent Studio",
+      "followers_est": 19600
+    },
+    {
+      "handle": "buildmaster_uz",
+      "relevance_score": 82,
+      "reasoning": "Commercial + residential mix, strong Reels showing completed projects, running Ad Library ads",
+      "source": "ad_library",
+      "display_name": "BuildMaster UZ",
+      "followers_est": 12300
+    },
+    {
+      "handle": "remontkvartir_tz",
+      "relevance_score": 79,
+      "reasoning": "Direct apartment renovation competitor, growing account with active hashtag strategy",
+      "source": "hashtag_search",
+      "display_name": "Ремонт Квартир Ташкент",
+      "followers_est": 8900
+    },
+    {
+      "handle": "design_house_uz",
+      "relevance_score": 77,
+      "reasoning": "Strong visual brand, high engagement on before/after Tashkent renovation content",
+      "source": "hashtag_search",
+      "display_name": "Design House UZ",
+      "followers_est": 33100
+    },
+    {
+      "handle": "eurostroy_tashkent",
+      "relevance_score": 74,
+      "reasoning": "Premium segment, different price point but same geographic target and homeowner audience",
+      "source": "ad_library",
+      "display_name": "EuroStroy Tashkent",
+      "followers_est": 15700
+    },
+    {
+      "handle": "quickfix_uz",
+      "relevance_score": 71,
+      "reasoning": "Budget renovation segment, high posting frequency, active audience engagement",
+      "source": "hashtag_search",
+      "display_name": "QuickFix UZ",
+      "followers_est": 6200
+    },
+    {
+      "handle": "smart_build_uz",
+      "relevance_score": 68,
+      "reasoning": "Smart home + renovation crossover, targets same homeowner demographic in Tashkent",
+      "source": "hashtag_search",
+      "display_name": "Smart Build UZ",
+      "followers_est": 22400
+    }
+  ]
+}

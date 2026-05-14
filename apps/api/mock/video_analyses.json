@@ -1,0 +1,152 @@
+{
+  "posts": [
+    {
+      "id": "post_001",
+      "competitor_handle": "stroycity_tashkent",
+      "media_type": "reel",
+      "caption": "Посмотрите как мы за 3 недели преобразили эту квартиру! До и после 🏠✨ Звоните нам для бесплатной консультации #ремонт #ташкент #до_и_после",
+      "hashtags": ["ремонт", "ташкент", "до_и_после", "строительство", "интерьер"],
+      "likes_est": 1847,
+      "comments_est": 143,
+      "views_est": 28400,
+      "engagement_score": 78.3,
+      "duration_secs": 28
+    },
+    {
+      "id": "post_002",
+      "competitor_handle": "remont_pro_uz",
+      "media_type": "reel",
+      "caption": "3 ошибки при выборе подрядчика, которые стоят вам денег 💰 Сохраните этот видео! #строительство #ремонтсоветы",
+      "hashtags": ["строительство", "ремонтсоветы", "подрядчик", "ташкент"],
+      "likes_est": 2341,
+      "comments_est": 287,
+      "views_est": 41200,
+      "engagement_score": 89.1,
+      "duration_secs": 32
+    }
+  ],
+  "video_analyses": [
+    {
+      "post_id": "post_001",
+      "transcript": "Смотрите что произошло с этой квартирой за 21 день. В начале — старые обои, треснувшая плитка, и окна которые не закрывались. Наша команда зашла в понедельник. К пятнице следующей недели — новая электрика, свежая штукатурка, и плитка уже лежала. Финальный результат видите сами. Хотите такое же? Ссылка в профиле.",
+      "hook_text": "Смотрите что произошло с этой квартирой за 21 день",
+      "hook_type": "promise",
+      "hook_duration_s": 3.2,
+      "value_prop": "Full apartment renovation in 21 days with professional team",
+      "cta_text": "Ссылка в профиле",
+      "pacing_style": "fast_cut",
+      "audio_track_name": "Trending upbeat instrumental",
+      "sentiment": "positive",
+      "content_format": "before-after",
+      "power_words": ["21 день", "результат", "наша команда", "хотите такое же"],
+      "engagement_score": 78.3
+    },
+    {
+      "post_id": "post_002",
+      "transcript": "Три ошибки которые я вижу каждый раз когда клиенты приходят к нам после других подрядчиков. Первое — не попросили смету с разбивкой по материалам. Второе — не проверили портфолио реальных завершённых объектов. Третье — не зафиксировали сроки в договоре. Сохраните это видео. Оно сэкономит вам деньги и нервы.",
+      "hook_text": "Три ошибки которые я вижу каждый раз",
+      "hook_type": "shock",
+      "hook_duration_s": 2.8,
+      "value_prop": "Educational content positioning brand as trusted expert who exposes contractor mistakes",
+      "cta_text": "Сохраните это видео",
+      "pacing_style": "talking_head",
+      "audio_track_name": null,
+      "sentiment": "educational",
+      "content_format": "tutorial",
+      "power_words": ["ошибки", "сэкономит", "деньги и нервы", "реальных завершённых"],
+      "engagement_score": 89.1
+    },
+    {
+      "post_id": "post_003",
+      "transcript": "POV: ты нанял подрядчика и они исчезли на третий день. Это реальная история клиента который пришёл к нам. Мы доделали их ремонт за 2 недели. Вот что нужно делать ПЕРЕД подписанием договора.",
+      "hook_text": "POV: ты нанял подрядчика и они исчезли на третий день",
+      "hook_type": "story",
+      "hook_duration_s": 4.1,
+      "value_prop": "Brand positioning as reliable alternative, rescue story builds trust",
+      "cta_text": "Пишите нам в директ",
+      "pacing_style": "talking_head",
+      "audio_track_name": "Soft dramatic music",
+      "sentiment": "urgent",
+      "content_format": "testimonial",
+      "power_words": ["исчезли", "реальная история", "доделали", "2 недели"],
+      "engagement_score": 84.7
+    },
+    {
+      "post_id": "post_004",
+      "transcript": "Знаете сколько стоит реальная смета на ремонт однокомнатной квартиры в Ташкенте в 2025 году? Я покажу вам реальные цифры без скрытых наценок. Материалы — 15 миллионов. Работа — 8 миллионов. Итого — 23 миллиона. Большинство берут 30-35. Разница — это их маржа.",
+      "hook_text": "Знаете сколько стоит реальная смета на ремонт?",
+      "hook_type": "question",
+      "hook_duration_s": 3.5,
+      "value_prop": "Price transparency as competitive advantage, builds immediate trust",
+      "cta_text": "Получите смету бесплатно — ссылка в профиле",
+      "pacing_style": "talking_head",
+      "audio_track_name": null,
+      "sentiment": "educational",
+      "content_format": "price-breakdown",
+      "power_words": ["реальные цифры", "без скрытых наценок", "их маржа", "бесплатно"],
+      "engagement_score": 92.4
+    },
+    {
+      "post_id": "post_005",
+      "transcript": "День на стройке. 7 утра — проверка материалов. 9 — планёрка с бригадой. 11 — контроль качества укладки плитки. 14 — звонок клиенту с обновлением. 16 — фото для отчёта. 18 — всё по плану. Вот почему наши проекты сдаются в срок.",
+      "hook_text": "День на стройке",
+      "hook_type": "story",
+      "hook_duration_s": 2.0,
+      "value_prop": "Transparency about daily process builds confidence in delivery capability",
+      "cta_text": "Начните проект с нами",
+      "pacing_style": "b_roll",
+      "audio_track_name": "Upbeat work montage music",
+      "sentiment": "positive",
+      "content_format": "day-in-life",
+      "power_words": ["в срок", "контроль качества", "по плану", "отчёт"],
+      "engagement_score": 81.2
+    }
+  ],
+  "niche_summary": {
+    "winning_patterns": [
+      {
+        "pattern": "Transparency hook — reveal hidden costs or industry secrets",
+        "frequency": 68,
+        "why_it_works": "Immediately positions brand as trustworthy outsider vs. shady industry norm"
+      },
+      {
+        "pattern": "Before & after transformation in 21-30 days",
+        "frequency": 54,
+        "why_it_works": "Visual proof of capability, specific timeline creates believability"
+      },
+      {
+        "pattern": "Educational list (3-5 contractor mistakes)",
+        "frequency": 47,
+        "why_it_works": "High save rate signals content value to algorithm, positions brand as expert"
+      },
+      {
+        "pattern": "Day in the life / process transparency",
+        "frequency": 41,
+        "why_it_works": "Humanizes brand, builds trust through operational credibility"
+      },
+      {
+        "pattern": "Client rescue story (POV format)",
+        "frequency": 35,
+        "why_it_works": "Story triggers emotion, creates contrast, strong narrative arc in 30s"
+      }
+    ],
+    "best_hook_styles": [
+      {
+        "type": "question",
+        "example": "Знаете сколько стоит реальный ремонт в Ташкенте?",
+        "effectiveness_score": 92
+      },
+      {
+        "type": "shock",
+        "example": "Три ошибки которые стоят вам миллионы",
+        "effectiveness_score": 87
+      },
+      {
+        "type": "story",
+        "example": "POV: подрядчик исчез на третий день",
+        "effectiveness_score": 83
+      }
+    ],
+    "mock": true
+  }
+}

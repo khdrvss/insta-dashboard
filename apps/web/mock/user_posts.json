@@ -1,0 +1,88 @@
+{
+  "posts": [
+    {
+      "id": "upost_001",
+      "igMediaId": "17854360000000001",
+      "mediaType": "reel",
+      "caption": "21 день — и квартира преображена! До и после 🏠✨ Работаем по всему Ташкенту. Консультация бесплатно — ссылка в профиле #ремонт #ташкент #до_и_после #строительство",
+      "hashtags": ["ремонт", "ташкент", "до_и_после", "строительство"],
+      "mediaUrl": null,
+      "thumbnailUrl": null,
+      "permalink": "https://www.instagram.com/p/mock001/",
+      "likeCount": 1243,
+      "commentCount": 97,
+      "engagementRate": 10.81,
+      "postedAt": "2025-05-10T09:00:00Z"
+    },
+    {
+      "id": "upost_002",
+      "igMediaId": "17854360000000002",
+      "mediaType": "reel",
+      "caption": "3 вопроса которые нужно задать подрядчику ПЕРЕД подписанием договора 📋 Сохраните этот видео! #ремонтсоветы #строительство #ташкент",
+      "hashtags": ["ремонтсоветы", "строительство", "ташкент"],
+      "mediaUrl": null,
+      "thumbnailUrl": null,
+      "permalink": "https://www.instagram.com/p/mock002/",
+      "likeCount": 987,
+      "commentCount": 144,
+      "engagementRate": 9.12,
+      "postedAt": "2025-05-07T11:00:00Z"
+    },
+    {
+      "id": "upost_003",
+      "igMediaId": "17854360000000003",
+      "mediaType": "carousel",
+      "caption": "Реальная смета на ремонт 2-комнатной квартиры в Ташкенте. Никаких скрытых наценок 💰 #ремонт #ценыташкент #строительство",
+      "hashtags": ["ремонт", "ценыташкент", "строительство"],
+      "mediaUrl": null,
+      "thumbnailUrl": null,
+      "permalink": "https://www.instagram.com/p/mock003/",
+      "likeCount": 812,
+      "commentCount": 203,
+      "engagementRate": 8.18,
+      "postedAt": "2025-05-04T10:00:00Z"
+    },
+    {
+      "id": "upost_004",
+      "igMediaId": "17854360000000004",
+      "mediaType": "reel",
+      "caption": "День на стройке — с 7 утра до 7 вечера. Вот как строится доверие 🏗️ #строительство #day_in_life #ташкент",
+      "hashtags": ["строительство", "day_in_life", "ташкент"],
+      "mediaUrl": null,
+      "thumbnailUrl": null,
+      "permalink": "https://www.instagram.com/p/mock004/",
+      "likeCount": 743,
+      "commentCount": 62,
+      "engagementRate": 6.49,
+      "postedAt": "2025-05-01T08:00:00Z"
+    },
+    {
+      "id": "upost_005",
+      "igMediaId": "17854360000000005",
+      "mediaType": "image",
+      "caption": "Объект сдан! Кухня в Мирабадском районе 🍳 Клиент в восторге. Следующий проект — уже ваш? #ремонт #кухня #ташкент #интерьер",
+      "hashtags": ["ремонт", "кухня", "ташкент", "интерьер"],
+      "mediaUrl": null,
+      "thumbnailUrl": null,
+      "permalink": "https://www.instagram.com/p/mock005/",
+      "likeCount": 634,
+      "commentCount": 41,
+      "engagementRate": 5.44,
+      "postedAt": "2025-04-28T14:00:00Z"
+    },
+    {
+      "id": "upost_006",
+      "igMediaId": "17854360000000006",
+      "mediaType": "carousel",
+      "caption": "Bathroom renovation — from bare concrete to marble finish in 18 days. Chilanzar district, Tashkent. #renovation #bathroom #tashkent",
+      "hashtags": ["renovation", "bathroom", "tashkent"],
+      "mediaUrl": null,
+      "thumbnailUrl": null,
+      "permalink": "https://www.instagram.com/p/mock006/",
+      "likeCount": 521,
+      "commentCount": 35,
+      "engagementRate": 4.48,
+      "postedAt": "2025-04-24T12:00:00Z"
+    }
+  ]
+}

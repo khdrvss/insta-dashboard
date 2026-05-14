@@ -1,0 +1,33 @@
+{
+  "user": {
+    "id": "mock-user-001",
+    "email": "demo@instaintel.app",
+    "instagramHandle": "stroycorp_demo",
+    "niche": "construction Tashkent",
+    "location": "Tashkent, Uzbekistan",
+    "brandVoice": "bold",
+    "plan": "free"
+  },
+  "instagram": {
+    "igUserId": "17841400000000001",
+    "username": "stroycorp_demo",
+    "name": "StroyCorp Demo",
+    "biography": "🏗️ Professional construction & renovation in Tashkent\n✅ 500+ projects completed\n📞 Free consultation — link in bio",
+    "profilePictureUrl": "https://images.clerk.dev/uploaded/img_placeholder.webp",
+    "followersCount": 12400,
+    "followsCount": 430,
+    "mediaCount": 87,
+    "avgEngagementRate": 4.73,
+    "avgLikes": 487,
+    "avgComments": 38,
+    "postingFreqPerWk": 4.2,
+    "topHashtags": ["ремонт", "ташкент", "строительство", "до_и_после", "интерьер", "renovation", "tashkent", "remont", "квартира", "ремонтквартир"],
+    "contentMix": {
+      "video": 52,
+      "image": 28,
+      "carousel_album": 20
+    },
+    "lastSyncedAt": "2025-05-14T00:00:00Z"
+  },
+  "connected": true
+}

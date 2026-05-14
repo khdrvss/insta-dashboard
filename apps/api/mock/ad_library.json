@@ -1,0 +1,51 @@
+{
+  "ads": [
+    {
+      "page_name": "StroyCity Tashkent",
+      "page_id": "100063...",
+      "ad_creative_body": "Ремонт квартиры под ключ в Ташкенте. Гарантия 2 года. Смета за 24 часа. Звоните!",
+      "ad_format": "video",
+      "spend_range": "medium",
+      "impressions_est": "50K–100K"
+    },
+    {
+      "page_name": "RemontPro UZ",
+      "page_id": "100071...",
+      "ad_creative_body": "🏠 Ремонт квартир от 8 млн сум. Быстро, качественно, с гарантией. Узнайте стоимость бесплатно!",
+      "ad_format": "carousel",
+      "spend_range": "high",
+      "impressions_est": "100K–200K"
+    },
+    {
+      "page_name": "EuroStroy Tashkent",
+      "page_id": "100082...",
+      "ad_creative_body": "Европейское качество ремонта в Ташкенте. Материалы из Европы. Мастера с сертификатами.",
+      "ad_format": "video",
+      "spend_range": "high",
+      "impressions_est": "200K+"
+    },
+    {
+      "page_name": "BuildMaster UZ",
+      "page_id": "100059...",
+      "ad_creative_body": "Commercial construction in Tashkent. Offices, retail, residential. Turnkey delivery.",
+      "ad_format": "single_image",
+      "spend_range": "low",
+      "impressions_est": "10K–50K"
+    },
+    {
+      "page_name": "Smart Build UZ",
+      "page_id": "100094...",
+      "ad_creative_body": "Smart home + renovation. Control your lights, security, and AC from your phone. Modern living starts here.",
+      "ad_format": "video",
+      "spend_range": "medium",
+      "impressions_est": "50K–100K"
+    }
+  ],
+  "meta": {
+    "search_terms": "construction renovation Tashkent",
+    "country": "UZ",
+    "retrieved_at": "2025-05-14T00:00:00Z",
+    "mock": true,
+    "disclaimer": "All spend and impression data are AI-estimated based on public signals. Not official Meta data."
+  }
+}
