@@ -5,6 +5,8 @@ import {
   Wand2, Copy, Download, RefreshCw, Loader2,
   Target, Mic, Monitor, Clock, CheckCircle
 } from "lucide-react";
+import { downloadScriptAsDocx } from "@/lib/export-script-docx";
+import { useLang } from "@/lib/i18n/context";
 
 type Goal = "brand_awareness" | "direct_sales" | "lead_generation";
 type Platform = "reels" | "ads";
@@ -31,45 +33,47 @@ interface Script {
   predicted_strength: "hook" | "retention" | "cta" | "balanced";
 }
 
-const GOALS: { value: Goal; label: string; icon: string }[] = [
-  { value: "brand_awareness", label: "Brand Awareness", icon: "🎯" },
-  { value: "direct_sales", label: "Direct Sales", icon: "💰" },
-  { value: "lead_generation", label: "Lead Generation", icon: "📩" },
-];
-
-const PLATFORMS: { value: Platform; label: string }[] = [
-  { value: "reels", label: "Instagram Reels" },
-  { value: "ads", label: "Meta Ads" },
-];
-
 const LENGTHS: { value: Length; label: string }[] = [
   { value: 15, label: "15 sec" },
   { value: 30, label: "30 sec" },
   { value: 60, label: "60 sec" },
 ];
 
-const TONES: { value: Tone; label: string }[] = [
-  { value: "formal", label: "Formal" },
-  { value: "friendly", label: "Friendly" },
-  { value: "bold", label: "Bold" },
-  { value: "educational", label: "Educational" },
-];
-
 const STRENGTH_COLORS = {
-  hook: "text-violet-400 bg-violet-500/20",
+  hook:      "text-violet-400 bg-violet-500/20",
   retention: "text-pink-400 bg-pink-500/20",
-  cta: "text-orange-400 bg-orange-500/20",
-  balanced: "text-green-400 bg-green-500/20",
+  cta:       "text-orange-400 bg-orange-500/20",
+  balanced:  "text-green-400 bg-green-500/20",
 };
 
 export default function ScriptsPage() {
-  const [goal, setGoal] = useState<Goal>("brand_awareness");
+  const [goal, setGoal]       = useState<Goal>("brand_awareness");
   const [platform, setPlatform] = useState<Platform>("reels");
-  const [length, setLength] = useState<Length>(30);
-  const [tone, setTone] = useState<Tone>("friendly");
+  const [length, setLength]   = useState<Length>(30);
+  const [tone, setTone]       = useState<Tone>("friendly");
   const [loading, setLoading] = useState(false);
   const [scripts, setScripts] = useState<Script[]>([]);
   const [copiedIdx, setCopiedIdx] = useState<number | null>(null);
+  const { T } = useLang();
+  const s = T.scripts;
+
+  const GOALS: { value: Goal; label: string; icon: string }[] = [
+    { value: "brand_awareness", label: s.goals.brand_awareness, icon: "🎯" },
+    { value: "direct_sales",    label: s.goals.direct_sales,    icon: "💰" },
+    { value: "lead_generation", label: s.goals.lead_generation, icon: "📩" },
+  ];
+
+  const PLATFORMS: { value: Platform; label: string }[] = [
+    { value: "reels", label: s.platforms.reels },
+    { value: "ads",   label: s.platforms.ads },
+  ];
+
+  const TONES: { value: Tone; label: string }[] = [
+    { value: "formal",      label: s.tones.formal },
+    { value: "friendly",    label: s.tones.friendly },
+    { value: "bold",        label: s.tones.bold },
+    { value: "educational", label: s.tones.educational },
+  ];
 
   async function generateScripts() {
     setLoading(true);
@@ -97,8 +101,8 @@ export default function ScriptsPage() {
       "",
       "## SCRIPT",
       ...script.scenes.map(
-        (s) =>
-          `[${s.timecode}]\nVisual: ${s.visual}${s.on_screen_text ? `\nOn-Screen: ${s.on_screen_text}` : ""}\nAudio: "${s.audio}"`
+        (sc) =>
+          `[${sc.timecode}]\nVisual: ${sc.visual}${sc.on_screen_text ? `\nOn-Screen: ${sc.on_screen_text}` : ""}\nAudio: "${sc.audio}"`
       ),
       "",
       `## CAPTION\n${script.caption}`,
@@ -106,8 +110,6 @@ export default function ScriptsPage() {
       `## HASHTAGS\n#${script.hashtags.join(" #")}`,
       "",
       `## THUMBNAIL\n${script.thumbnail_idea}`,
-      "",
-      `## AUDIO STYLE\n${script.suggested_audio_style}`,
     ].join("\n");
 
     navigator.clipboard.writeText(text);
@@ -119,11 +121,8 @@ export default function ScriptsPage() {
     <div className="space-y-8 animate-fade-in">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-white">Script Generator</h1>
-        <p className="text-white/50 mt-1">
-          Generate 3 original, high-converting video scripts based on winning patterns
-          in your niche
-        </p>
+        <h1 className="text-2xl font-bold text-white">{s.pageTitle}</h1>
+        <p className="text-white/50 mt-1">{s.pageSubtitle}</p>
       </div>
 
       {/* Controls */}
@@ -132,7 +131,7 @@ export default function ScriptsPage() {
         <div>
           <label className="flex items-center gap-2 text-sm font-medium text-white/70 mb-3">
             <Target className="h-4 w-4" />
-            Campaign Goal
+            {s.campaignGoal}
           </label>
           <div className="flex flex-wrap gap-2">
             {GOALS.map(({ value, label, icon }) => (
@@ -157,7 +156,7 @@ export default function ScriptsPage() {
           <div>
             <label className="flex items-center gap-2 text-sm font-medium text-white/70 mb-3">
               <Monitor className="h-4 w-4" />
-              Platform
+              {s.platform}
             </label>
             <div className="flex gap-2">
               {PLATFORMS.map(({ value, label }) => (
@@ -180,7 +179,7 @@ export default function ScriptsPage() {
           <div>
             <label className="flex items-center gap-2 text-sm font-medium text-white/70 mb-3">
               <Clock className="h-4 w-4" />
-              Length
+              {s.length}
             </label>
             <div className="flex gap-2">
               {LENGTHS.map(({ value, label }) => (
@@ -203,7 +202,7 @@ export default function ScriptsPage() {
           <div>
             <label className="flex items-center gap-2 text-sm font-medium text-white/70 mb-3">
               <Mic className="h-4 w-4" />
-              Tone
+              {s.tone}
             </label>
             <div className="flex flex-wrap gap-2">
               {TONES.map(({ value, label }) => (
@@ -232,18 +231,18 @@ export default function ScriptsPage() {
           {loading ? (
             <>
               <Loader2 className="h-5 w-5 animate-spin" />
-              Writing high-converting scripts...
+              {s.generating}
             </>
           ) : (
             <>
               <Wand2 className="h-5 w-5" />
-              Generate 3 Script Variations
+              {s.generateBtn}
             </>
           )}
         </button>
       </div>
 
-      {/* Loading state */}
+      {/* Loading skeleton */}
       {loading && (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {[1, 2, 3].map((i) => (
@@ -265,14 +264,14 @@ export default function ScriptsPage() {
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <h2 className="font-semibold text-white">
-              Generated Scripts — {scripts.length} variations
+              {s.generatedH2} {scripts.length} {s.variations}
             </h2>
             <button
               onClick={generateScripts}
               className="flex items-center gap-2 border border-white/20 text-white/60 hover:text-white hover:border-white/40 px-4 py-2 rounded-xl text-sm transition-colors"
             >
               <RefreshCw className="h-4 w-4" />
-              Regenerate
+              {s.regenerate}
             </button>
           </div>
 
@@ -293,7 +292,7 @@ export default function ScriptsPage() {
                         STRENGTH_COLORS[script.predicted_strength]
                       }`}
                     >
-                      Strong {script.predicted_strength}
+                      {s.strongPrefix} {script.predicted_strength}
                     </span>
                   </div>
                   <p className="text-xs text-white/40 leading-relaxed">
@@ -312,12 +311,12 @@ export default function ScriptsPage() {
                         {scene.timecode}
                       </span>
                       <p className="text-xs text-white/50">
-                        <span className="text-white/30">Visual: </span>
+                        <span className="text-white/30">{s.visual} </span>
                         {scene.visual}
                       </p>
                       {scene.on_screen_text && (
                         <p className="text-xs text-white/50">
-                          <span className="text-white/30">Text: </span>
+                          <span className="text-white/30">{s.text} </span>
                           {scene.on_screen_text}
                         </p>
                       )}
@@ -331,14 +330,11 @@ export default function ScriptsPage() {
                 {/* Caption & hashtags */}
                 <div className="space-y-2 pt-2 border-t border-white/10">
                   <p className="text-xs text-white/50 leading-relaxed">
-                    <span className="text-white/30 font-medium">Caption: </span>
+                    <span className="text-white/30 font-medium">{s.captionLabel} </span>
                     {script.caption}
                   </p>
                   <p className="text-xs text-violet-400/70">
                     #{script.hashtags.join(" #")}
-                  </p>
-                  <p className="text-xs text-white/30">
-                    🎵 {script.suggested_audio_style}
                   </p>
                 </div>
 
@@ -351,29 +347,28 @@ export default function ScriptsPage() {
                     {copiedIdx === idx ? (
                       <>
                         <CheckCircle className="h-3.5 w-3.5 text-green-400" />
-                        Copied!
+                        {s.copied}
                       </>
                     ) : (
                       <>
                         <Copy className="h-3.5 w-3.5" />
-                        Copy
+                        {s.copy}
                       </>
                     )}
                   </button>
                   <button
-                    onClick={() => {
-                      const blob = new Blob([JSON.stringify(script, null, 2)], {
-                        type: "application/json",
-                      });
-                      const url = URL.createObjectURL(blob);
-                      const a = document.createElement("a");
-                      a.href = url;
-                      a.download = `script-v${script.variation}.json`;
-                      a.click();
-                    }}
+                    onClick={() =>
+                      downloadScriptAsDocx(script, {
+                        platform,
+                        lengthSecs: length,
+                        tone,
+                      })
+                    }
+                    title="Download as Word document (.docx)"
                     className="flex items-center justify-center gap-1.5 border border-white/20 text-white/60 hover:text-white hover:border-white/40 px-3 py-2 rounded-lg text-xs transition-colors"
                   >
                     <Download className="h-3.5 w-3.5" />
+                    <span className="hidden sm:inline">.docx</span>
                   </button>
                 </div>
               </div>
@@ -382,17 +377,15 @@ export default function ScriptsPage() {
         </div>
       )}
 
-      {/* Empty state (no scripts yet) */}
+      {/* Empty state */}
       {!loading && scripts.length === 0 && (
         <div className="rounded-2xl border border-dashed border-white/15 p-16 text-center">
           <div className="mx-auto h-14 w-14 rounded-2xl bg-violet-500/20 flex items-center justify-center mb-4">
             <Wand2 className="h-7 w-7 text-violet-400" />
           </div>
-          <h3 className="font-semibold text-white mb-2">No scripts yet</h3>
+          <h3 className="font-semibold text-white mb-2">{s.noScripts}</h3>
           <p className="text-white/40 text-sm max-w-md mx-auto">
-            Select your goal, platform, and tone above, then hit Generate. Scripts are
-            powered by RAG — they use winning patterns from your niche to create
-            original content.
+            {s.noScriptsDesc}
           </p>
         </div>
       )}

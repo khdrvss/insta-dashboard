@@ -1,16 +1,18 @@
-import { currentUser } from "@clerk/nextjs/server";
+export const dynamic = "force-dynamic";
+
 import { redirect } from "next/navigation";
 import { Sidebar } from "@/components/dashboard/Sidebar";
 import { Header } from "@/components/dashboard/Header";
 import { OAuthToast } from "@/components/dashboard/OAuthToast";
 import { Suspense } from "react";
+import { getCurrentUser } from "@/lib/mock-auth";
 
 export default async function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const user = await currentUser();
+  const user = await getCurrentUser();
   if (!user) redirect("/sign-in");
 
   return (

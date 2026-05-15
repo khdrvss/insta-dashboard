@@ -1,4 +1,4 @@
-import { auth } from "@clerk/nextjs/server";
+import { getAuth as auth } from "@/lib/mock-auth";
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@instagram-dashboard/db";
 import { z } from "zod";

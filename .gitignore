@@ -25,6 +25,14 @@ __pycache__/
 
 # Prisma
 packages/db/node_modules/
+packages/db/*.db
+packages/db/prisma/*.db
+
+# TypeScript build info
+*.tsbuildinfo
+
+# Lock files (optional — remove if you want to commit them)
+package-lock.json
 
 # Python virtualenv
 apps/api/.venv/

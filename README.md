@@ -231,12 +231,67 @@ Set `USE_MOCK_DATA=true` in `.env.local` to bypass all external APIs:
 ## Phase Implementation Status
 
 - [x] **Phase 1**: Monorepo, Prisma schema, Clerk auth, Next.js layout + 5 dashboard tabs
-- [ ] **Phase 2**: Meta Graph API OAuth, post fetching, profile overview (next)
-- [ ] **Phase 3**: Competitor discovery engine (hashtag search + Ad Library + AI filter)
-- [ ] **Phase 4**: Content analysis (Apify + Whisper + Gemini + Pinecone)
-- [ ] **Phase 5**: Script generation (full RAG pipeline)
-- [ ] **Phase 6**: Recharts dashboards, competitor comparison table, dark/light mode toggle
-- [ ] **Phase 7**: Stripe payments, tests, Vercel + Render deployment
+- [x] **Phase 2**: Meta Graph API OAuth, post fetching, profile overview
+- [x] **Phase 3**: Competitor discovery engine (hashtag search + Ad Library + Claude filter + confirm UI)
+- [x] **Phase 4**: Content analysis engine (Apify + Whisper + Gemini + Pinecone + async workers)
+- [x] **Phase 5**: RAG-powered insights (niche intelligence, power phrases, hook patterns)
+- [x] **Phase 6**: Recharts dashboards (engagement trend, content format pie, competitor table)
+- [x] **Phase 7**: Stripe billing, upgrade page, Vercel + Render deployment configs
+
+---
+
+## Deployment
+
+### Frontend → Vercel
+
+```bash
+# Install Vercel CLI
+npm i -g vercel
+
+# From project root
+cd C:\Users\USER\instagram-dashboard
+vercel --cwd apps/web
+
+# Set environment variables in Vercel Dashboard
+# (copy from .env.example — all NEXT_PUBLIC_ vars + server vars)
+```
+
+Or connect your GitHub repo in the Vercel dashboard and set root directory to `apps/web`.
+
+**Required Vercel env vars:**
+- `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`
+- `CLERK_SECRET_KEY`
+- `DATABASE_URL` (Supabase pooler URL)
+- `DIRECT_URL` (Supabase direct URL)
+- `ANTHROPIC_API_KEY`
+- `API_BASE_URL` (your Render API URL, e.g. `https://instaintel-api.onrender.com`)
+- `NEXT_PUBLIC_APP_URL` (your Vercel URL)
+- `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`
+- `INTERNAL_API_SECRET`
+
+### Backend → Render
+
+1. Push to GitHub
+2. Go to [render.com](https://render.com) → New → Web Service
+3. Connect repo → set root directory to `apps/api`
+4. Render auto-detects `render.yaml`
+5. Fill in env vars from `.env.example`
+6. Deploy
+
+### Database → Supabase
+
+```bash
+# Point DATABASE_URL to your Supabase project
+# Then run migrations
+cd packages/db
+npx prisma migrate deploy
+```
+
+### Stripe Webhook
+
+After deploying to Vercel, register the webhook in Stripe Dashboard:
+- Endpoint: `https://your-vercel-url.vercel.app/api/webhooks/stripe`
+- Events: `checkout.session.completed`, `customer.subscription.deleted`
 
 ---
 

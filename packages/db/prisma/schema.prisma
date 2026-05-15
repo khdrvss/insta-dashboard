@@ -6,99 +6,31 @@ generator client {
 }
 
 datasource db {
-  provider  = "postgresql"
-  url       = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
-}
-
-// ─── Enums ────────────────────────────────────────────────────────────────────
-
-enum Plan {
-  free
-  pro
-}
-
-enum BrandVoice {
-  formal
-  friendly
-  bold
-  educational
-}
-
-enum JobStatus {
-  pending
-  running
-  done
-  failed
-}
-
-enum JobType {
-  competitor_discovery
-  content_analysis
-  script_generation
-}
-
-enum Platform {
-  reels
-  ads
-}
-
-enum ScriptGoal {
-  brand_awareness
-  direct_sales
-  lead_generation
-}
-
-enum MediaType {
-  image
-  video
-  carousel
-  reel
-}
-
-enum DiscoverySource {
-  hashtag_search
-  ad_library
-  manual
-  llm_suggestion
-}
-
-enum HookType {
-  question
-  shock
-  promise
-  story
-  statistic
-  challenge
-}
-
-enum PacingStyle {
-  fast_cut
-  talking_head
-  b_roll
-  text_only
-  mixed
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
 }
 
 // ─── Core Tables ──────────────────────────────────────────────────────────────
+// Note: SQLite does not support enums or array types.
+// Enums are stored as String. Arrays are stored as JSON-encoded String.
 
 model User {
-  id               String     @id @default(cuid())
-  clerkId          String     @unique @map("clerk_id")
-  email            String     @unique
-  instagramHandle  String?    @map("instagram_handle")
+  id               String   @id @default(cuid())
+  clerkId          String   @unique @map("clerk_id")
+  email            String   @unique
+  instagramHandle  String?  @map("instagram_handle")
   niche            String?
   location         String?
-  targetAudience   String?    @map("target_audience")
-  brandVoice       BrandVoice @default(friendly) @map("brand_voice")
+  targetAudience   String?  @map("target_audience")
+  brandVoice       String   @default("friendly") @map("brand_voice")
   tone             String?
-  productsServices String?    @map("products_services")
-  plan             Plan       @default(free)
-  onboardingDone   Boolean    @default(false) @map("onboarding_done")
-  metaAccessToken  String?    @map("meta_access_token")
-  metaTokenExpiry  DateTime?  @map("meta_token_expiry")
-  createdAt        DateTime   @default(now()) @map("created_at")
-  updatedAt        DateTime   @updatedAt @map("updated_at")
+  productsServices String?  @map("products_services")
+  plan             String   @default("free")
+  onboardingDone   Boolean  @default(false) @map("onboarding_done")
+  metaAccessToken  String?  @map("meta_access_token")
+  metaTokenExpiry  DateTime? @map("meta_token_expiry")
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @updatedAt @map("updated_at")
 
   competitors      Competitor[]
   generatedScripts GeneratedScript[]
@@ -111,20 +43,20 @@ model User {
 }
 
 model Competitor {
-  id               String          @id @default(cuid())
-  userId           String          @map("user_id")
+  id               String   @id @default(cuid())
+  userId           String   @map("user_id")
   handle           String
-  displayName      String?         @map("display_name")
-  profilePicUrl    String?         @map("profile_pic_url")
+  displayName      String?  @map("display_name")
+  profilePicUrl    String?  @map("profile_pic_url")
   bio              String?
-  followersEst     Int?            @map("followers_est")
-  relevanceScore   Float           @default(0) @map("relevance_score")
-  relevanceReason  String?         @map("relevance_reason")
-  confirmed        Boolean         @default(false)
-  discoverySource  DiscoverySource @map("discovery_source")
-  lastAnalyzedAt   DateTime?       @map("last_analyzed_at")
-  createdAt        DateTime        @default(now()) @map("created_at")
-  updatedAt        DateTime        @updatedAt @map("updated_at")
+  followersEst     Int?     @map("followers_est")
+  relevanceScore   Float    @default(0) @map("relevance_score")
+  relevanceReason  String?  @map("relevance_reason")
+  confirmed        Boolean  @default(false)
+  discoverySource  String   @map("discovery_source")
+  lastAnalyzedAt   DateTime? @map("last_analyzed_at")
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @updatedAt @map("updated_at")
 
   user  User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   posts Post[]
@@ -134,22 +66,22 @@ model Competitor {
 }
 
 model Post {
-  id              String    @id @default(cuid())
-  competitorId    String    @map("competitor_id")
-  externalId      String?   @map("external_id")
-  mediaType       MediaType @map("media_type")
-  caption         String?   @db.Text
-  hashtags        String[]
-  videoUrl        String?   @map("video_url")
-  thumbnailUrl    String?   @map("thumbnail_url")
-  likesEst        Int?      @map("likes_est")
-  commentsEst     Int?      @map("comments_est")
-  viewsEst        Int?      @map("views_est")
-  sharesEst       Int?      @map("shares_est")
-  engagementScore Float?    @map("engagement_score")
-  durationSecs    Int?      @map("duration_secs")
+  id              String   @id @default(cuid())
+  competitorId    String   @map("competitor_id")
+  externalId      String?  @map("external_id")
+  mediaType       String   @map("media_type")
+  caption         String?
+  hashtags        String   @default("[]")
+  videoUrl        String?  @map("video_url")
+  thumbnailUrl    String?  @map("thumbnail_url")
+  likesEst        Int?     @map("likes_est")
+  commentsEst     Int?     @map("comments_est")
+  viewsEst        Int?     @map("views_est")
+  sharesEst       Int?     @map("shares_est")
+  engagementScore Float?   @map("engagement_score")
+  durationSecs    Int?     @map("duration_secs")
   postedAt        DateTime? @map("posted_at")
-  createdAt       DateTime  @default(now()) @map("created_at")
+  createdAt       DateTime @default(now()) @map("created_at")
 
   competitor    Competitor     @relation(fields: [competitorId], references: [id], onDelete: Cascade)
   videoAnalysis VideoAnalysis?
@@ -158,24 +90,24 @@ model Post {
 }
 
 model VideoAnalysis {
-  id              String      @id @default(cuid())
-  postId          String      @unique @map("post_id")
-  transcript      String?     @db.Text
-  hookText        String?     @map("hook_text") @db.Text
-  hookType        HookType?   @map("hook_type")
-  hookDurationS   Float?      @map("hook_duration_s")
-  valueProp       String?     @map("value_prop") @db.Text
-  ctaText         String?     @map("cta_text")
-  pacingStyle     PacingStyle? @map("pacing_style")
-  audioTrackId    String?     @map("audio_track_id")
-  audioTrackName  String?     @map("audio_track_name")
+  id              String   @id @default(cuid())
+  postId          String   @unique @map("post_id")
+  transcript      String?
+  hookText        String?  @map("hook_text")
+  hookType        String?  @map("hook_type")
+  hookDurationS   Float?   @map("hook_duration_s")
+  valueProp       String?  @map("value_prop")
+  ctaText         String?  @map("cta_text")
+  pacingStyle     String?  @map("pacing_style")
+  audioTrackId    String?  @map("audio_track_id")
+  audioTrackName  String?  @map("audio_track_name")
   sentiment       String?
-  contentFormat   String?     @map("content_format")
-  powerWords      String[]    @map("power_words")
-  embeddingVector Float[]     @map("embedding_vector")
-  pineconeId      String?     @map("pinecone_id")
-  rawAnalysisJson Json?       @map("raw_analysis_json")
-  analyzedAt      DateTime    @default(now()) @map("analyzed_at")
+  contentFormat   String?  @map("content_format")
+  powerWords      String   @default("[]") @map("power_words")
+  embeddingVector String   @default("[]") @map("embedding_vector")
+  pineconeId      String?  @map("pinecone_id")
+  rawAnalysisJson String?  @map("raw_analysis_json")
+  analyzedAt      DateTime @default(now()) @map("analyzed_at")
 
   post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
 
@@ -183,18 +115,18 @@ model VideoAnalysis {
 }
 
 model GeneratedScript {
-  id         String     @id @default(cuid())
-  userId     String     @map("user_id")
-  goal       ScriptGoal
+  id         String   @id @default(cuid())
+  userId     String   @map("user_id")
+  goal       String
   tone       String
-  platform   Platform
-  lengthSecs Int        @map("length_secs")
+  platform   String
+  lengthSecs Int      @map("length_secs")
   niche      String?
-  scriptJson Json       @map("script_json")
-  promptHash String?    @map("prompt_hash")
-  modelUsed  String?    @map("model_used")
-  tokenCount Int?       @map("token_count")
-  createdAt  DateTime   @default(now()) @map("created_at")
+  scriptJson String   @map("script_json")
+  promptHash String?  @map("prompt_hash")
+  modelUsed  String?  @map("model_used")
+  tokenCount Int?     @map("token_count")
+  createdAt  DateTime @default(now()) @map("created_at")
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -202,16 +134,16 @@ model GeneratedScript {
 }
 
 model AnalysisJob {
-  id          String    @id @default(cuid())
-  userId      String    @map("user_id")
-  type        JobType
-  status      JobStatus @default(pending)
-  progress    Int       @default(0)
-  metadata    Json?
-  errorMsg    String?   @map("error_msg")
+  id          String   @id @default(cuid())
+  userId      String   @map("user_id")
+  type        String
+  status      String   @default("pending")
+  progress    Int      @default(0)
+  metadata    String?
+  errorMsg    String?  @map("error_msg")
   startedAt   DateTime? @map("started_at")
   completedAt DateTime? @map("completed_at")
-  createdAt   DateTime  @default(now()) @map("created_at")
+  createdAt   DateTime @default(now()) @map("created_at")
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -221,22 +153,22 @@ model AnalysisJob {
 // ─── User's own Instagram posts (fetched via Meta Graph API) ─────────────────
 
 model UserPost {
-  id              String    @id @default(cuid())
-  userId          String    @map("user_id")
-  igMediaId       String    @unique @map("ig_media_id")
-  mediaType       MediaType @map("media_type")
-  caption         String?   @db.Text
-  hashtags        String[]
-  mediaUrl        String?   @map("media_url")
-  thumbnailUrl    String?   @map("thumbnail_url")
+  id              String   @id @default(cuid())
+  userId          String   @map("user_id")
+  igMediaId       String   @unique @map("ig_media_id")
+  mediaType       String   @map("media_type")
+  caption         String?
+  hashtags        String   @default("[]")
+  mediaUrl        String?  @map("media_url")
+  thumbnailUrl    String?  @map("thumbnail_url")
   permalink       String?
-  likeCount       Int?      @map("like_count")
-  commentCount    Int?      @map("comment_count")
-  reachEst        Int?      @map("reach_est")
-  impressionsEst  Int?      @map("impressions_est")
-  engagementRate  Float?    @map("engagement_rate")
+  likeCount       Int?     @map("like_count")
+  commentCount    Int?     @map("comment_count")
+  reachEst        Int?     @map("reach_est")
+  impressionsEst  Int?     @map("impressions_est")
+  engagementRate  Float?   @map("engagement_rate")
   postedAt        DateTime? @map("posted_at")
-  fetchedAt       DateTime  @default(now()) @map("fetched_at")
+  fetchedAt       DateTime @default(now()) @map("fetched_at")
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -260,8 +192,8 @@ model InstagramAccount {
   avgLikes          Float?   @map("avg_likes")
   avgComments       Float?   @map("avg_comments")
   postingFreqPerWk  Float?   @map("posting_freq_per_wk")
-  topHashtags       String[] @map("top_hashtags")
-  contentMix        Json?    @map("content_mix")
+  topHashtags       String   @default("[]") @map("top_hashtags")
+  contentMix        String?  @map("content_mix")
   lastSyncedAt      DateTime @default(now()) @map("last_synced_at")
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)

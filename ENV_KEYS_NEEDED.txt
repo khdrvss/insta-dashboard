@@ -1,0 +1,119 @@
+============================================================
+  InstaIntel — API Keys You Need to Fill In
+  File: apps/web/.env.local
+============================================================
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  1. CLERK AUTH  (Required for login/signup)
+     Get it free at: https://clerk.com
+     → Create app → API Keys
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY = pk_test_...
+  CLERK_SECRET_KEY                  = sk_test_...
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  2. ANTHROPIC (Claude AI — script generation & analysis)
+     Get it at: https://console.anthropic.com
+     → API Keys → Create Key
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  ANTHROPIC_API_KEY = sk-ant-...
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  3. OPENAI (Whisper — competitor Reels transcription)
+     Get it at: https://platform.openai.com
+     → API Keys → Create new secret key
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  OPENAI_API_KEY = sk-...
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  4. GOOGLE (Gemini — video analysis)
+     Get it at: https://aistudio.google.com
+     → Get API Key
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  GOOGLE_API_KEY = AIza...
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  5. PINECONE (Vector DB — RAG-powered script generation)
+     Get it at: https://app.pinecone.io
+     → Create index → API Keys
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  PINECONE_API_KEY   = pcsk_...
+  PINECONE_INDEX_NAME = instagram-content-patterns
+  PINECONE_ENVIRONMENT = us-east-1
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  6. META / INSTAGRAM (Connect user's own IG account)
+     Get it at: https://developers.facebook.com
+     → My Apps → Create App → Business type
+     → Add Instagram Graph API product
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  META_APP_ID     = (numbers, e.g. 123456789)
+  META_APP_SECRET = (hex string)
+
+  ⚠ Also add this to your Meta App's Valid OAuth Redirect URIs:
+     http://localhost:3000/api/auth/instagram/callback   ← for local dev
+     https://yourdomain.com/api/auth/instagram/callback  ← for production
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  7. APIFY (Ethical Instagram scraping — competitor discovery)
+     Get it at: https://apify.com
+     → Settings → Integrations → API tokens
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  APIFY_API_TOKEN = apify_api_...
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  8. STRIPE (Payments — free/pro billing)
+     Get it at: https://dashboard.stripe.com
+     → Developers → API Keys
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  STRIPE_SECRET_KEY            = sk_test_...
+  STRIPE_WEBHOOK_SECRET        = whsec_...   (from Stripe → Webhooks)
+  STRIPE_PRO_MONTHLY_PRICE_ID  = price_...   (create in Stripe → Products)
+  STRIPE_PRO_ANNUAL_PRICE_ID   = price_...   (create in Stripe → Products)
+
+  ⚠ Register webhook in Stripe Dashboard → Webhooks:
+     Endpoint URL: https://yourdomain.com/api/webhooks/stripe
+     Events to listen for:
+       - checkout.session.completed
+       - customer.subscription.deleted
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  PRIORITY ORDER — what to get first
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  To test core AI features locally (mock data OFF):
+    1. ANTHROPIC_API_KEY   ← most important, powers everything
+    2. CLERK keys          ← needed for real login
+    3. OPENAI_API_KEY      ← Whisper transcription
+    4. GOOGLE_API_KEY      ← Gemini video analysis
+
+  To test competitor discovery:
+    5. APIFY_API_TOKEN
+    6. META_APP_ID + META_APP_SECRET
+
+  To test payments:
+    7. STRIPE keys
+
+  To test RAG scripts:
+    8. PINECONE keys
+
+  ⭐ Right now with USE_MOCK_DATA=true you need NONE of these.
+     The app runs fully on fixture data at http://localhost:3000
+
+============================================================

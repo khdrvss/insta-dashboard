@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { SignedIn, SignedOut } from "@clerk/nextjs";
 import { ArrowRight, BarChart3, Brain, Sparkles, TrendingUp, Zap } from "lucide-react";
 
 export default function LandingPage() {
@@ -15,28 +14,18 @@ export default function LandingPage() {
             <span className="font-bold text-lg">InstaIntel</span>
           </div>
           <div className="flex items-center gap-3">
-            <SignedOut>
-              <Link
-                href="/sign-in"
-                className="text-sm text-white/70 hover:text-white transition-colors px-4 py-2"
-              >
-                Sign in
-              </Link>
-              <Link
-                href="/sign-up"
-                className="text-sm bg-violet-600 hover:bg-violet-700 text-white px-4 py-2 rounded-lg transition-colors font-medium"
-              >
-                Get started free
-              </Link>
-            </SignedOut>
-            <SignedIn>
-              <Link
-                href="/dashboard"
-                className="text-sm bg-violet-600 hover:bg-violet-700 text-white px-4 py-2 rounded-lg transition-colors font-medium"
-              >
-                Go to Dashboard
-              </Link>
-            </SignedIn>
+            <Link
+              href="/sign-in"
+              className="text-sm text-white/70 hover:text-white transition-colors px-4 py-2"
+            >
+              Sign in
+            </Link>
+            <Link
+              href="/dashboard"
+              className="text-sm bg-violet-600 hover:bg-violet-700 text-white px-4 py-2 rounded-lg transition-colors font-medium"
+            >
+              Dashboard →
+            </Link>
           </div>
         </div>
       </nav>
@@ -61,30 +50,19 @@ export default function LandingPage() {
         </p>
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-          <SignedOut>
-            <Link
-              href="/sign-up"
-              className="flex items-center gap-2 bg-violet-600 hover:bg-violet-700 text-white px-8 py-4 rounded-xl transition-colors font-semibold text-lg"
-            >
-              Start for free
-              <ArrowRight className="h-5 w-5" />
-            </Link>
-            <Link
-              href="/sign-in"
-              className="text-white/60 hover:text-white px-8 py-4 transition-colors"
-            >
-              Already have an account?
-            </Link>
-          </SignedOut>
-          <SignedIn>
-            <Link
-              href="/dashboard"
-              className="flex items-center gap-2 bg-violet-600 hover:bg-violet-700 text-white px-8 py-4 rounded-xl transition-colors font-semibold text-lg"
-            >
-              Open Dashboard
-              <ArrowRight className="h-5 w-5" />
-            </Link>
-          </SignedIn>
+          <Link
+            href="/dashboard"
+            className="flex items-center gap-2 bg-violet-600 hover:bg-violet-700 text-white px-8 py-4 rounded-xl transition-colors font-semibold text-lg"
+          >
+            Start for free
+            <ArrowRight className="h-5 w-5" />
+          </Link>
+          <Link
+            href="/sign-in"
+            className="text-white/60 hover:text-white px-8 py-4 transition-colors"
+          >
+            Already have an account?
+          </Link>
         </div>
       </section>
 

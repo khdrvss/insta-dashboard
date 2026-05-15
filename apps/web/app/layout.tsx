@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import { ClerkProvider } from "@clerk/nextjs";
-import { dark } from "@clerk/themes";
 import "./globals.css";
+import { LangProvider } from "@/lib/i18n/context";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -16,27 +15,47 @@ export const metadata: Metadata = {
   keywords: ["Instagram marketing", "competitor analysis", "content strategy", "AI scripts"],
 };
 
-export default function RootLayout({
+const CLERK_KEY = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY ?? "";
+const USE_CLERK =
+  CLERK_KEY.startsWith("pk_") && !CLERK_KEY.includes("placeholder");
+
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  if (USE_CLERK) {
+    const { ClerkProvider } = await import("@clerk/nextjs");
+    const { dark } = await import("@clerk/themes");
+
+    return (
+      <ClerkProvider
+        appearance={{
+          baseTheme: dark,
+          variables: {
+            colorPrimary: "#7C3AED",
+            colorBackground: "#0d1117",
+            colorInputBackground: "#161b22",
+            colorInputText: "#e6edf3",
+            borderRadius: "0.75rem",
+          },
+        }}
+      >
+        <html lang="uz" className="dark" suppressHydrationWarning>
+          <body className={inter.className}>
+            <LangProvider>{children}</LangProvider>
+          </body>
+        </html>
+      </ClerkProvider>
+    );
+  }
+
+  // Mock / dev mode — no Clerk provider needed
   return (
-    <ClerkProvider
-      appearance={{
-        baseTheme: dark,
-        variables: {
-          colorPrimary: "#7C3AED",
-          colorBackground: "#0d1117",
-          colorInputBackground: "#161b22",
-          colorInputText: "#e6edf3",
-          borderRadius: "0.75rem",
-        },
-      }}
-    >
-      <html lang="en" className="dark" suppressHydrationWarning>
-        <body className={inter.className}>{children}</body>
-      </html>
-    </ClerkProvider>
+    <html lang="uz" className="dark" suppressHydrationWarning>
+      <body className={inter.className}>
+        <LangProvider>{children}</LangProvider>
+      </body>
+    </html>
   );
 }

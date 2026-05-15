@@ -97,17 +97,14 @@ async def get_job_status(job_id: str):
 
 
 async def run_analysis_job(job_id: str, handles: list[str], niche: str, max_posts: int):
-    """Background task: fetch posts, transcribe, analyze, embed"""
-    # This is the skeleton — Phase 4 fills this in fully
-    for handle in handles:
-        try:
-            posts = await fetch_competitor_posts(handle=handle, max_posts=max_posts)
-            for post in posts[:5]:  # analyze top 5 per competitor for now
-                if post.get("video_url"):
-                    await analyze_video_content(
-                        video_url=post["video_url"],
-                        caption=post.get("caption", ""),
-                        niche=niche,
-                    )
-        except Exception as e:
-            print(f"[analyze_job] Error for {handle}: {e}")
+    """Background task: calls the full analysis worker pipeline"""
+    from workers.analysis_worker import run_analysis
+    try:
+        await run_analysis(
+            job_id=job_id,
+            user_id="",
+            niche=niche,
+            competitor_handles=handles,
+        )
+    except Exception as e:
+        print(f"[analyze_job] Worker failed: {e}")

@@ -1,120 +1,211 @@
-import { BarChart3, AlertCircle, PlayCircle } from "lucide-react";
+"use client";
 
-export const metadata = { title: "Analysis" };
+import { useEffect, useState } from "react";
+import { BarChart3, AlertCircle, PlayCircle, RefreshCw, Loader2 } from "lucide-react";
+import { AnalysisJobStatus } from "@/components/dashboard/analysis/AnalysisJobStatus";
+import { CompetitorTable } from "@/components/dashboard/analysis/CompetitorTable";
+import { NicheSummaryCard } from "@/components/dashboard/analysis/NicheSummaryCard";
+import { TopPostsGallery } from "@/components/dashboard/analysis/TopPostsGallery";
+import { EngagementTrendChart } from "@/components/charts/EngagementTrendChart";
+import { ContentFormatPie } from "@/components/charts/ContentFormatPie";
+import { useLang } from "@/lib/i18n/context";
+
+interface AnalysisResults {
+  competitors: any[];
+  top_posts: any[];
+  engagement_trend: any[];
+  content_format_breakdown?: any[];
+  niche_summary: any;
+  mock?: boolean;
+}
 
 export default function AnalysisPage() {
+  const [results, setResults] = useState<AnalysisResults | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [jobId, setJobId] = useState<string | null>(null);
+  const [starting, setStarting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const { T } = useLang();
+  const a = T.analysis;
+
+  useEffect(() => { loadResults(); }, []);
+
+  async function loadResults() {
+    setLoading(true);
+    try {
+      const res = await fetch("/api/analyze/results");
+      if (res.ok) {
+        const data = await res.json();
+        if (data.competitors?.length > 0) setResults(data);
+      }
+    } catch { /* silent */ }
+    setLoading(false);
+  }
+
+  async function startAnalysis() {
+    setStarting(true);
+    setError(null);
+    try {
+      const res = await fetch("/api/analyze/start", { method: "POST" });
+      const data = await res.json();
+      if (!res.ok) { setError(data.error ?? "Failed to start"); setStarting(false); return; }
+      if (data.status === "done") { await loadResults(); setStarting(false); }
+      else setJobId(data.job_id);
+    } catch {
+      setError("Network error — please try again");
+      setStarting(false);
+    }
+  }
+
+  async function handleJobComplete() {
+    setJobId(null);
+    setStarting(false);
+    await loadResults();
+  }
+
+  // ── Job running ─────────────────────────────────────────────────────────────
+  if (jobId) {
+    return (
+      <div className="space-y-6 animate-fade-in">
+        <div>
+          <h1 className="text-2xl font-bold text-white">{a.pageTitle}</h1>
+          <p className="text-white/50 mt-1">{a.runningSubtitle}</p>
+        </div>
+        <AnalysisJobStatus jobId={jobId} onComplete={handleJobComplete} />
+      </div>
+    );
+  }
+
+  // ── Loading ─────────────────────────────────────────────────────────────────
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <Loader2 className="h-8 w-8 text-violet-400 animate-spin" />
+      </div>
+    );
+  }
+
+  // ── Empty state ─────────────────────────────────────────────────────────────
+  if (!results) {
+    return (
+      <div className="space-y-8 animate-fade-in">
+        <div>
+          <h1 className="text-2xl font-bold text-white">{a.pageTitle}</h1>
+          <p className="text-white/50 mt-1">{a.pageSubtitle}</p>
+        </div>
+
+        <div className="flex items-start gap-3 rounded-xl border border-amber-500/20 bg-amber-500/10 p-4">
+          <AlertCircle className="h-5 w-5 text-amber-400 flex-shrink-0 mt-0.5" />
+          <p className="text-sm text-amber-200/70">
+            <span className="font-medium text-amber-300">{a.aiEstimated} </span>
+            {a.aiEstimatedText}
+          </p>
+        </div>
+
+        <div className="rounded-2xl border border-dashed border-white/15 p-16 text-center">
+          <div className="mx-auto h-14 w-14 rounded-2xl bg-violet-500/20 flex items-center justify-center mb-4">
+            <BarChart3 className="h-7 w-7 text-violet-400" />
+          </div>
+          <h3 className="font-semibold text-white text-lg mb-2">{a.noDataTitle}</h3>
+          <p className="text-white/40 text-sm max-w-md mx-auto mb-6 leading-relaxed">
+            {a.noDataDesc}
+          </p>
+          {error && <p className="text-red-400 text-sm mb-4">{error}</p>}
+          <button
+            onClick={startAnalysis}
+            disabled={starting}
+            className="inline-flex items-center gap-2 gradient-brand text-white px-8 py-3.5 rounded-xl font-semibold hover:opacity-90 transition-opacity disabled:opacity-60"
+          >
+            {starting ? <Loader2 className="h-5 w-5 animate-spin" /> : <PlayCircle className="h-5 w-5" />}
+            {starting ? a.runningBtn : a.runAnalysis}
+          </button>
+          <p className="text-white/20 text-xs mt-3">{a.timeEst}</p>
+        </div>
+      </div>
+    );
+  }
+
+  // ── Results ─────────────────────────────────────────────────────────────────
+  const formatData = results.content_format_breakdown ?? [
+    { name: "Reels / Video", value: 52, color: "#7C3AED" },
+    { name: "Photos", value: 28, color: "#EC4899" },
+    { name: "Carousels", value: 20, color: "#F97316" },
+  ];
+
   return (
     <div className="space-y-8 animate-fade-in">
       {/* Header */}
-      <div>
-        <h1 className="text-2xl font-bold text-white">Content Analysis</h1>
-        <p className="text-white/50 mt-1">
-          Deep dive into competitor performance — engagement trends, formats, and
-          winning hooks
-        </p>
-      </div>
-
-      {/* Compliance badge */}
-      <div className="flex items-start gap-3 rounded-xl border border-blue-500/20 bg-blue-500/10 p-4">
-        <AlertCircle className="h-5 w-5 text-blue-400 flex-shrink-0 mt-0.5" />
-        <p className="text-sm text-blue-200/70">
-          <span className="font-medium text-blue-300">AI-estimated data: </span>
-          All engagement metrics shown below are estimated by AI analysis of publicly
-          available signals. They are not official Instagram statistics and should be
-          used for directional insight only.
-        </p>
-      </div>
-
-      {/* Placeholder panels */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        {/* Competitor comparison table placeholder */}
-        <div className="lg:col-span-2 rounded-2xl border border-white/10 bg-white/5 p-6">
-          <h2 className="font-semibold text-white mb-1">Competitor Comparison</h2>
-          <p className="text-white/40 text-sm mb-6">
-            Side-by-side metrics across all confirmed competitors
+      <div className="flex items-start justify-between flex-wrap gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-white">{a.pageTitle}</h1>
+          <p className="text-white/50 mt-1">
+            {results.competitors.length} competitors analyzed ·{" "}
+            {results.top_posts.length} top posts surfaced
           </p>
-          <EmptyAnalysisPlaceholder
-            icon={BarChart3}
-            title="No analysis data yet"
-            desc="Confirm competitors and run the content analysis engine to see engagement comparisons."
-          />
         </div>
-
-        {/* AI Summary card placeholder */}
-        <div className="rounded-2xl border border-violet-500/30 bg-violet-500/10 p-6">
-          <h2 className="font-semibold text-white mb-1">AI Niche Summary</h2>
-          <p className="text-white/40 text-sm mb-6">
-            Top 5 winning patterns in your niche
-          </p>
-          <div className="space-y-3">
-            {[1, 2, 3, 4, 5].map((i) => (
-              <div key={i} className="h-10 rounded-lg bg-white/5 animate-pulse" />
-            ))}
-          </div>
-          <p className="text-white/20 text-xs mt-4 text-center">
-            Run analysis to unlock
-          </p>
+        <div className="flex items-center gap-3">
+          {results.mock && (
+            <span className="text-xs px-3 py-1.5 rounded-lg border border-amber-500/20 bg-amber-500/10 text-amber-300">
+              {a.mockBadge}
+            </span>
+          )}
+          <button
+            onClick={startAnalysis}
+            disabled={starting}
+            className="flex items-center gap-2 border border-white/20 text-white/60 hover:text-white hover:border-white/40 px-4 py-2 rounded-xl text-sm transition-colors disabled:opacity-40"
+          >
+            <RefreshCw className={`h-4 w-4 ${starting ? "animate-spin" : ""}`} />
+            {a.reAnalyze}
+          </button>
         </div>
       </div>
 
-      {/* Charts row placeholders */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <ChartPlaceholder title="Engagement Trend Over Time" />
-        <ChartPlaceholder title="Content Format Breakdown" />
+      {/* Compliance note */}
+      <div className="flex items-start gap-3 rounded-xl border border-blue-500/20 bg-blue-500/10 p-3.5">
+        <AlertCircle className="h-4 w-4 text-blue-400 flex-shrink-0 mt-0.5" />
+        <p className="text-xs text-blue-200/70">
+          All competitor metrics are <span className="font-medium text-blue-300">AI-estimated</span> based on publicly available signals. Not affiliated with Meta or Instagram.
+        </p>
       </div>
 
-      {/* Top content gallery */}
+      {/* Competitor comparison table */}
       <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
-        <h2 className="font-semibold text-white mb-1">Top Performing Content</h2>
-        <p className="text-white/40 text-sm mb-6">
-          Highest-engagement posts across all tracked competitors
-        </p>
-        <EmptyAnalysisPlaceholder
-          icon={PlayCircle}
-          title="No content analyzed yet"
-          desc="Confirm competitors then run content analysis. We'll identify the top 10% of posts by engagement score."
-        />
+        <h2 className="font-semibold text-white mb-4">{a.competitorComp}</h2>
+        <CompetitorTable competitors={results.competitors} />
       </div>
-    </div>
-  );
-}
 
-function EmptyAnalysisPlaceholder({
-  icon: Icon,
-  title,
-  desc,
-}: {
-  icon: React.ElementType;
-  title: string;
-  desc: string;
-}) {
-  return (
-    <div className="flex flex-col items-center justify-center py-12 text-center">
-      <div className="h-12 w-12 rounded-xl bg-white/5 flex items-center justify-center mb-4">
-        <Icon className="h-6 w-6 text-white/20" />
+      {/* Charts row */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
+          <h2 className="font-semibold text-white mb-4">{a.engagementTrend}</h2>
+          <EngagementTrendChart data={results.engagement_trend} />
+        </div>
+        <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
+          <h2 className="font-semibold text-white mb-4">{a.contentFormat}</h2>
+          <ContentFormatPie data={formatData} />
+        </div>
       </div>
-      <p className="text-white/50 font-medium text-sm">{title}</p>
-      <p className="text-white/25 text-xs mt-1 max-w-xs">{desc}</p>
-    </div>
-  );
-}
 
-function ChartPlaceholder({ title }: { title: string }) {
-  return (
-    <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
-      <h3 className="font-semibold text-white mb-4">{title}</h3>
-      <div className="h-48 flex items-end gap-2 px-2">
-        {[40, 65, 45, 80, 55, 90, 70, 50, 75, 60, 85, 45].map((h, i) => (
-          <div
-            key={i}
-            className="flex-1 rounded-t-sm bg-white/5"
-            style={{ height: `${h}%` }}
-          />
-        ))}
+      {/* Niche summary + Top posts */}
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+        <div className="lg:col-span-2 rounded-2xl border border-white/10 bg-white/5 p-6">
+          <h2 className="font-semibold text-white mb-4">{a.nicheIntel}</h2>
+          {results.niche_summary ? (
+            <NicheSummaryCard summary={results.niche_summary} />
+          ) : (
+            <div className="py-8 text-center text-white/30 text-sm">
+              {a.nichePending}
+            </div>
+          )}
+        </div>
+        <div className="lg:col-span-3 rounded-2xl border border-white/10 bg-white/5 p-6">
+          <h2 className="font-semibold text-white mb-4">
+            {a.topPosts}
+            <span className="text-white/30 font-normal text-sm ml-2">{a.topPostsSub}</span>
+          </h2>
+          <TopPostsGallery posts={results.top_posts} />
+        </div>
       </div>
-      <p className="text-white/20 text-xs mt-4 text-center">
-        Run analysis to populate chart
-      </p>
     </div>
   );
 }

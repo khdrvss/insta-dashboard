@@ -1,0 +1,182 @@
+{
+  "competitors": [
+    {
+      "handle": "stroycity_tashkent",
+      "display_name": "StroyCity Tashkent",
+      "followers_est": 28400,
+      "posts_analyzed": 12,
+      "avg_engagement_rate": 7.2,
+      "top_format": "before-after",
+      "top_hook_type": "promise",
+      "avg_views_est": 31200,
+      "posting_freq_per_wk": 5.1
+    },
+    {
+      "handle": "remont_pro_uz",
+      "display_name": "RemontPro UZ",
+      "followers_est": 41200,
+      "posts_analyzed": 15,
+      "avg_engagement_rate": 8.9,
+      "top_format": "tutorial",
+      "top_hook_type": "shock",
+      "avg_views_est": 58700,
+      "posting_freq_per_wk": 6.3
+    },
+    {
+      "handle": "architecture_uz",
+      "display_name": "Architecture UZ",
+      "followers_est": 67800,
+      "posts_analyzed": 10,
+      "avg_engagement_rate": 4.1,
+      "top_format": "showcase",
+      "top_hook_type": "story",
+      "avg_views_est": 44100,
+      "posting_freq_per_wk": 3.2
+    },
+    {
+      "handle": "interior_tashkent",
+      "display_name": "Interior Tashkent",
+      "followers_est": 19600,
+      "posts_analyzed": 9,
+      "avg_engagement_rate": 6.4,
+      "top_format": "before-after",
+      "top_hook_type": "question",
+      "avg_views_est": 19800,
+      "posting_freq_per_wk": 4.5
+    },
+    {
+      "handle": "buildmaster_uz",
+      "display_name": "BuildMaster UZ",
+      "followers_est": 12300,
+      "posts_analyzed": 8,
+      "avg_engagement_rate": 5.8,
+      "top_format": "day-in-life",
+      "top_hook_type": "story",
+      "avg_views_est": 11400,
+      "posting_freq_per_wk": 4.1
+    }
+  ],
+  "top_posts": [
+    {
+      "id": "tp_001",
+      "competitor_handle": "remont_pro_uz",
+      "caption": "3 ошибки которые стоят вам миллионы при выборе подрядчика...",
+      "hook_text": "Три ошибки которые я вижу каждый раз",
+      "hook_type": "shock",
+      "engagement_score": 92.4,
+      "likes_est": 2341,
+      "comments_est": 287,
+      "views_est": 58700,
+      "pacing_style": "talking_head",
+      "content_format": "tutorial",
+      "duration_secs": 32
+    },
+    {
+      "id": "tp_002",
+      "competitor_handle": "stroycity_tashkent",
+      "caption": "21 день — и квартира преображена! До и после...",
+      "hook_text": "21 день — и квартира преображена",
+      "hook_type": "promise",
+      "engagement_score": 89.1,
+      "likes_est": 1843,
+      "comments_est": 143,
+      "views_est": 31200,
+      "pacing_style": "fast_cut",
+      "content_format": "before-after",
+      "duration_secs": 28
+    },
+    {
+      "id": "tp_003",
+      "competitor_handle": "remont_pro_uz",
+      "caption": "POV: подрядчик исчез на третий день...",
+      "hook_text": "POV: подрядчик исчез на третий день",
+      "hook_type": "story",
+      "engagement_score": 84.7,
+      "likes_est": 1621,
+      "comments_est": 198,
+      "views_est": 49200,
+      "pacing_style": "talking_head",
+      "content_format": "testimonial",
+      "duration_secs": 35
+    },
+    {
+      "id": "tp_004",
+      "competitor_handle": "stroycity_tashkent",
+      "caption": "Сколько стоит реальный ремонт квартиры в Ташкенте?",
+      "hook_text": "Знаете сколько стоит реальная смета?",
+      "hook_type": "question",
+      "engagement_score": 81.2,
+      "likes_est": 1287,
+      "comments_est": 203,
+      "views_est": 28900,
+      "pacing_style": "talking_head",
+      "content_format": "price-breakdown",
+      "duration_secs": 42
+    },
+    {
+      "id": "tp_005",
+      "competitor_handle": "interior_tashkent",
+      "caption": "Эта маленькая кухня стала нашим любимым проектом...",
+      "hook_text": "Эта кухня изменила всё что мы знали о пространстве",
+      "hook_type": "story",
+      "engagement_score": 78.3,
+      "likes_est": 986,
+      "comments_est": 94,
+      "views_est": 19800,
+      "pacing_style": "b_roll",
+      "content_format": "showcase",
+      "duration_secs": 22
+    },
+    {
+      "id": "tp_006",
+      "competitor_handle": "buildmaster_uz",
+      "caption": "День на стройке — с 7 утра до 18:00...",
+      "hook_text": "День на стройке",
+      "hook_type": "story",
+      "engagement_score": 74.1,
+      "likes_est": 743,
+      "comments_est": 62,
+      "views_est": 11400,
+      "pacing_style": "b_roll",
+      "content_format": "day-in-life",
+      "duration_secs": 45
+    }
+  ],
+  "engagement_trend": [
+    { "week": "Apr 7", "avg_engagement": 5.2, "top_competitor": 7.1 },
+    { "week": "Apr 14", "avg_engagement": 6.1, "top_competitor": 8.3 },
+    { "week": "Apr 21", "avg_engagement": 5.8, "top_competitor": 7.8 },
+    { "week": "Apr 28", "avg_engagement": 7.3, "top_competitor": 9.1 },
+    { "week": "May 5", "avg_engagement": 6.9, "top_competitor": 8.6 },
+    { "week": "May 12", "avg_engagement": 7.8, "top_competitor": 9.4 }
+  ],
+  "content_format_breakdown": [
+    { "name": "Reels / Video", "value": 52, "color": "#7C3AED" },
+    { "name": "Photos", "value": 28, "color": "#EC4899" },
+    { "name": "Carousels", "value": 20, "color": "#F97316" }
+  ],
+  "niche_summary": {
+    "winning_patterns": [
+      { "pattern": "Transparency hook — reveal hidden costs or industry secrets", "frequency": 68, "why_it_works": "Immediately positions brand as trustworthy vs. shady industry norm" },
+      { "pattern": "Before & after transformation (21–30 day timeframe)", "frequency": 54, "why_it_works": "Visual proof + specific timeline creates believability and urgency" },
+      { "pattern": "Educational list (3–5 contractor mistakes to avoid)", "frequency": 47, "why_it_works": "High save rate signals content value to algorithm, builds expert positioning" },
+      { "pattern": "Day in the life / process transparency", "frequency": 41, "why_it_works": "Humanizes brand, builds trust through operational credibility" },
+      { "pattern": "Client rescue story (POV format)", "frequency": 35, "why_it_works": "Story arc triggers emotion, creates contrast, strong narrative in 30s" }
+    ],
+    "best_hook_styles": [
+      { "type": "question", "example": "Знаете сколько стоит реальный ремонт в Ташкенте?", "effectiveness_score": 92 },
+      { "type": "shock", "example": "Три ошибки которые стоят вам миллионы", "effectiveness_score": 87 },
+      { "type": "story", "example": "POV: подрядчик исчез на третий день", "effectiveness_score": 83 },
+      { "type": "promise", "example": "21 день — и квартира преображена", "effectiveness_score": 79 }
+    ],
+    "top_content_formats": [
+      { "format": "before-after", "avg_engagement_lift": 34, "description": "Visual transformation with specific timeframe" },
+      { "format": "tutorial / mistake list", "avg_engagement_lift": 28, "description": "3–5 actionable tips, high save rate" },
+      { "format": "price transparency", "avg_engagement_lift": 22, "description": "Real cost breakdowns build instant trust" }
+    ],
+    "power_phrases": ["До и после", "За 21 день", "Без скрытых наценок", "Реальные цифры", "Ошибки которые", "Сохраните этот", "POV:", "Бесплатная консультация"],
+    "best_posting_patterns": { "times": ["09:00", "12:00", "19:00"], "days": ["Monday", "Wednesday", "Friday", "Saturday"], "frequency": "5–7x per week" },
+    "trending_audio_categories": ["Upbeat instrumental (no lyrics)", "Trending viral sounds (low volume + VO)", "Voiceover only", "Motivational speech clips"],
+    "summary": "Construction and renovation accounts in Tashkent perform best with transparency-led content — price breakdowns, day-in-life, and educational checklists dominate. Hooks that reveal hidden costs or industry secrets generate 2–3× average engagement. Posting frequency of 5–7×/week with Reels as primary format is the clear winning pattern."
+  }
+}

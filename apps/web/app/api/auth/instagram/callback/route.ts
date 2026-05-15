@@ -1,4 +1,4 @@
-import { auth } from "@clerk/nextjs/server";
+import { getAuth as auth } from "@/lib/mock-auth";
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@instagram-dashboard/db";
 import {
@@ -90,6 +90,10 @@ export async function GET(req: NextRequest) {
 
     const tokenExpiry = new Date(Date.now() + expiresIn * 1000);
 
+    // SQLite: arrays/objects must be JSON strings
+    const topHashtagsJson = JSON.stringify(topHashtags);
+    const contentMixJson = JSON.stringify(metrics.contentMix);
+
     await prisma.$transaction([
       // Update user with token
       prisma.user.update({
@@ -116,8 +120,8 @@ export async function GET(req: NextRequest) {
           avgLikes: metrics.avgLikes,
           avgComments: metrics.avgComments,
           postingFreqPerWk: metrics.postingFreqPerWk,
-          topHashtags,
-          contentMix: metrics.contentMix,
+          topHashtags: topHashtagsJson,
+          contentMix: contentMixJson,
           lastSyncedAt: new Date(),
         },
         create: {
@@ -134,8 +138,8 @@ export async function GET(req: NextRequest) {
           avgLikes: metrics.avgLikes,
           avgComments: metrics.avgComments,
           postingFreqPerWk: metrics.postingFreqPerWk,
-          topHashtags,
-          contentMix: metrics.contentMix,
+          topHashtags: topHashtagsJson,
+          contentMix: contentMixJson,
         },
       }),
       // Clear old posts and insert fresh batch
@@ -155,7 +159,7 @@ export async function GET(req: NextRequest) {
               ? "reel"
               : "image",
           caption: post.caption,
-          hashtags: extractHashtags(post.caption ?? ""),
+          hashtags: JSON.stringify(extractHashtags(post.caption ?? "")),
           mediaUrl: post.media_url,
           thumbnailUrl: post.thumbnail_url ?? post.media_url,
           permalink: post.permalink,
@@ -169,7 +173,6 @@ export async function GET(req: NextRequest) {
               : 0,
           postedAt: post.timestamp ? new Date(post.timestamp) : null,
         })),
-        skipDuplicates: true,
       });
     }
 

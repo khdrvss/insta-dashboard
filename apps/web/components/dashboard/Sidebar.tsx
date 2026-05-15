@@ -6,39 +6,19 @@ import {
   BarChart3, Brain, Lightbulb, Sparkles, Users, Wand2,
   ChevronRight, Instagram
 } from "lucide-react";
-
-const NAV_ITEMS = [
-  {
-    href: "/dashboard",
-    label: "Your Profile",
-    icon: Instagram,
-    exact: true,
-  },
-  {
-    href: "/dashboard/competitors",
-    label: "Competitors",
-    icon: Users,
-  },
-  {
-    href: "/dashboard/analysis",
-    label: "Analysis",
-    icon: BarChart3,
-  },
-  {
-    href: "/dashboard/insights",
-    label: "Content Insights",
-    icon: Lightbulb,
-  },
-  {
-    href: "/dashboard/scripts",
-    label: "Script Generator",
-    icon: Wand2,
-    highlight: true,
-  },
-];
+import { useLang } from "@/lib/i18n/context";
 
 export function Sidebar() {
   const pathname = usePathname();
+  const { T } = useLang();
+
+  const NAV_ITEMS = [
+    { href: "/dashboard",             label: T.nav.profile,     icon: Instagram, exact: true },
+    { href: "/dashboard/competitors", label: T.nav.competitors, icon: Users },
+    { href: "/dashboard/analysis",    label: T.nav.analysis,    icon: BarChart3 },
+    { href: "/dashboard/insights",    label: T.nav.insights,    icon: Lightbulb },
+    { href: "/dashboard/scripts",     label: T.nav.scripts,     icon: Wand2, highlight: true },
+  ];
 
   function isActive(href: string, exact?: boolean) {
     if (exact) return pathname === href;
@@ -68,8 +48,6 @@ export function Sidebar() {
               className={`group flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${
                 active
                   ? "bg-violet-600/20 text-white border border-violet-500/30"
-                  : highlight
-                  ? "text-white/60 hover:text-white hover:bg-white/5 border border-transparent"
                   : "text-white/60 hover:text-white hover:bg-white/5 border border-transparent"
               }`}
             >
@@ -102,16 +80,14 @@ export function Sidebar() {
         <div className="rounded-xl bg-violet-500/10 border border-violet-500/20 p-3">
           <div className="flex items-center gap-2 mb-1.5">
             <Brain className="h-4 w-4 text-violet-400" />
-            <span className="text-xs font-medium text-white">Free Plan</span>
+            <span className="text-xs font-medium text-white">{T.sidebar.freePlan}</span>
           </div>
-          <p className="text-xs text-white/40 mb-2">
-            5 script generations/month
-          </p>
+          <p className="text-xs text-white/40 mb-2">{T.sidebar.scriptQuota}</p>
           <Link
             href="/upgrade"
             className="block text-center text-xs font-medium gradient-brand text-white py-1.5 rounded-lg hover:opacity-90 transition-opacity"
           >
-            Upgrade to Pro
+            {T.sidebar.upgradeCta}
           </Link>
         </div>
       </div>
