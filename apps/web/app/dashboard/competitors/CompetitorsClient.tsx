@@ -3,7 +3,11 @@
 import { useState } from "react";
 import { AlertCircle, Users, RefreshCw } from "lucide-react";
 import { DiscoveryPanel } from "@/components/dashboard/competitors/DiscoveryPanel";
-import { ConfirmedList, ConfirmedCompetitor } from "@/components/dashboard/competitors/ConfirmedList";
+import {
+  ConfirmedList,
+  ConfirmedCompetitor,
+} from "@/components/dashboard/competitors/ConfirmedList";
+import type { ConfirmedResult } from "@/components/dashboard/competitors/DiscoveryPanel";
 import { useLang } from "@/lib/i18n/context";
 
 interface Props {
@@ -11,7 +15,8 @@ interface Props {
 }
 
 export function CompetitorsClient({ initialConfirmed }: Props) {
-  const [confirmed, setConfirmed] = useState<ConfirmedCompetitor[]>(initialConfirmed);
+  const [confirmed, setConfirmed] =
+    useState<ConfirmedCompetitor[]>(initialConfirmed);
   const [showDiscovery, setShowDiscovery] = useState(confirmed.length === 0);
   const { T } = useLang();
   const c = T.competitors;
@@ -20,11 +25,20 @@ export function CompetitorsClient({ initialConfirmed }: Props) {
     setConfirmed((prev) => prev.filter((c) => c.id !== id));
   }
 
-  async function handleConfirmed() {
+  async function handleConfirmed(results?: ConfirmedResult[]) {
+    if (results && results.length > 0) {
+      setConfirmed(results as ConfirmedCompetitor[]);
+      setShowDiscovery(false);
+      return;
+    }
     const res = await fetch("/api/competitors");
     if (res.ok) {
       const data = await res.json();
-      setConfirmed(data.competitors.filter((c: ConfirmedCompetitor & { confirmed: boolean }) => c.confirmed));
+      setConfirmed(
+        (data.competitors ?? []).filter(
+          (c: ConfirmedCompetitor & { confirmed: boolean }) => c.confirmed,
+        ),
+      );
     }
     setShowDiscovery(false);
   }
@@ -63,14 +77,21 @@ export function CompetitorsClient({ initialConfirmed }: Props) {
       {confirmed.length > 0 && (
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
-            <div className="text-2xl font-bold text-white">{confirmed.length}</div>
+            <div className="text-2xl font-bold text-white">
+              {confirmed.length}
+            </div>
             <div className="text-sm text-white/50 mt-0.5">{c.statsTracked}</div>
           </div>
           <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
             <div className="text-2xl font-bold text-white">
-              {confirmed.filter((x) => x._count?.posts && x._count.posts > 0).length}
+              {
+                confirmed.filter((x) => x._count?.posts && x._count.posts > 0)
+                  .length
+              }
             </div>
-            <div className="text-sm text-white/50 mt-0.5">{c.statsAnalyzed}</div>
+            <div className="text-sm text-white/50 mt-0.5">
+              {c.statsAnalyzed}
+            </div>
           </div>
           <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
             <div className="text-2xl font-bold text-white">
@@ -124,7 +145,9 @@ export function CompetitorsClient({ initialConfirmed }: Props) {
                 </div>
                 <div>
                   <div className="text-sm font-medium text-white">{title}</div>
-                  <div className="text-xs text-white/40 mt-1 leading-relaxed">{desc}</div>
+                  <div className="text-xs text-white/40 mt-1 leading-relaxed">
+                    {desc}
+                  </div>
                 </div>
               </div>
             ))}

@@ -1,7 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import { Search, Loader2, CheckCircle, AlertCircle, Plus, X } from "lucide-react";
+import {
+  Search,
+  Loader2,
+  CheckCircle,
+  AlertCircle,
+  Plus,
+  X,
+} from "lucide-react";
 import { CandidateCard, Candidate } from "./CandidateCard";
 
 const DISCOVERY_STEPS = [
@@ -11,12 +18,25 @@ const DISCOVERY_STEPS = [
   "Ranking by relevance score...",
 ];
 
+export interface ConfirmedResult {
+  handle: string;
+  displayName?: string;
+  relevanceScore: number;
+  followersEst?: number;
+  discoverySource: string;
+  id?: string;
+  confirmed?: boolean;
+  _count?: { posts: number };
+}
+
 interface Props {
-  onConfirmed: () => void;
+  onConfirmed: (results: ConfirmedResult[]) => void;
 }
 
 export function DiscoveryPanel({ onConfirmed }: Props) {
-  const [phase, setPhase] = useState<"idle" | "discovering" | "review" | "confirming" | "done">("idle");
+  const [phase, setPhase] = useState<
+    "idle" | "discovering" | "review" | "confirming" | "done"
+  >("idle");
   const [stepIndex, setStepIndex] = useState(0);
   const [candidates, setCandidates] = useState<Candidate[]>([]);
   const [selected, setSelected] = useState<Set<string>>(new Set());
@@ -49,7 +69,13 @@ export function DiscoveryPanel({ onConfirmed }: Props) {
       setCandidates(data.candidates);
       setTotalScanned(data.total_scanned);
       // Pre-select all with score >= 70
-      setSelected(new Set(data.candidates.filter((c: Candidate) => c.relevance_score >= 70).map((c: Candidate) => c.handle)));
+      setSelected(
+        new Set(
+          data.candidates
+            .filter((c: Candidate) => c.relevance_score >= 70)
+            .map((c: Candidate) => c.handle),
+        ),
+      );
       setPhase("review");
     } catch (e) {
       clearInterval(stepInterval);
@@ -109,10 +135,24 @@ export function DiscoveryPanel({ onConfirmed }: Props) {
         body: JSON.stringify({ competitors: toConfirm }),
       });
 
+      let confirmedData: ConfirmedResult[] = [];
       if (res.ok) {
+        const json = await res.json();
+        confirmedData = (json.competitors ?? json.confirmed ?? []).map(
+          (c: any) => ({
+            handle: c.handle,
+            displayName: c.displayName ?? c.display_name,
+            relevanceScore: c.relevanceScore ?? c.relevance_score,
+            followersEst: c.followersEst ?? c.followers_est,
+            discoverySource: c.discoverySource ?? c.source,
+            id: c.id ?? c.handle,
+            confirmed: true,
+            _count: { posts: 0 },
+          }),
+        );
         setPhase("done");
         setTimeout(() => {
-          onConfirmed();
+          onConfirmed(confirmedData);
           setPhase("idle");
           setCandidates([]);
           setSelected(new Set());
@@ -135,10 +175,12 @@ export function DiscoveryPanel({ onConfirmed }: Props) {
         <div className="mx-auto mb-4 h-14 w-14 rounded-2xl bg-violet-500/20 flex items-center justify-center">
           <Search className="h-7 w-7 text-violet-400" />
         </div>
-        <h3 className="text-white font-semibold text-lg mb-2">Discover your competitors</h3>
+        <h3 className="text-white font-semibold text-lg mb-2">
+          Discover your competitors
+        </h3>
         <p className="text-white/40 text-sm max-w-md mx-auto mb-6 leading-relaxed">
-          AI scans Instagram hashtags and Meta Ad Library to find the top business
-          accounts in your niche, then scores each one for relevance.
+          AI scans Instagram hashtags and Meta Ad Library to find the top
+          business accounts in your niche, then scores each one for relevance.
         </p>
 
         {error && (
@@ -155,7 +197,9 @@ export function DiscoveryPanel({ onConfirmed }: Props) {
           <Search className="h-4 w-4" />
           Start discovery
         </button>
-        <p className="text-white/20 text-xs mt-3">~30–60 seconds · uses AI analysis</p>
+        <p className="text-white/20 text-xs mt-3">
+          ~30–60 seconds · uses AI analysis
+        </p>
       </div>
     );
   }
@@ -175,8 +219,8 @@ export function DiscoveryPanel({ onConfirmed }: Props) {
                 i < stepIndex
                   ? "text-white/20 line-through"
                   : i === stepIndex
-                  ? "text-white font-medium"
-                  : "text-white/20"
+                    ? "text-white font-medium"
+                    : "text-white/20"
               }`}
             >
               {i < stepIndex ? (
@@ -199,7 +243,9 @@ export function DiscoveryPanel({ onConfirmed }: Props) {
     return (
       <div className="rounded-2xl border border-green-500/30 bg-green-500/10 p-10 text-center">
         <CheckCircle className="h-12 w-12 text-green-400 mx-auto mb-4" />
-        <h3 className="text-white font-semibold text-lg">{selected.size} competitors confirmed!</h3>
+        <h3 className="text-white font-semibold text-lg">
+          {selected.size} competitors confirmed!
+        </h3>
         <p className="text-white/40 text-sm mt-2">
           Ready to analyze their content. Head to the Analysis tab to start.
         </p>
@@ -222,7 +268,9 @@ export function DiscoveryPanel({ onConfirmed }: Props) {
         </div>
         <div className="flex items-center gap-2">
           <button
-            onClick={() => setSelected(new Set(candidates.map((c) => c.handle)))}
+            onClick={() =>
+              setSelected(new Set(candidates.map((c) => c.handle)))
+            }
             className="text-xs text-white/50 hover:text-white transition-colors px-3 py-1.5 border border-white/10 rounded-lg"
           >
             Select all
@@ -239,7 +287,9 @@ export function DiscoveryPanel({ onConfirmed }: Props) {
       {/* Manual add */}
       <div className="flex gap-2">
         <div className="relative flex-1">
-          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-white/30 text-sm">@</span>
+          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-white/30 text-sm">
+            @
+          </span>
           <input
             type="text"
             value={manualHandle}
@@ -282,11 +332,16 @@ export function DiscoveryPanel({ onConfirmed }: Props) {
       {/* Confirm bar (sticky at bottom) */}
       <div className="sticky bottom-0 bg-[#0d1117]/90 backdrop-blur-sm border-t border-white/10 -mx-6 px-6 py-4 flex items-center justify-between gap-4">
         <div className="text-sm text-white/50">
-          <span className="text-white font-medium">{selected.size}</span> of {candidates.length} selected
+          <span className="text-white font-medium">{selected.size}</span> of{" "}
+          {candidates.length} selected
         </div>
         <div className="flex items-center gap-3">
           <button
-            onClick={() => { setPhase("idle"); setCandidates([]); setSelected(new Set()); }}
+            onClick={() => {
+              setPhase("idle");
+              setCandidates([]);
+              setSelected(new Set());
+            }}
             className="border border-white/20 text-white/50 hover:text-white px-4 py-2.5 rounded-xl text-sm transition-colors"
           >
             Cancel
@@ -297,11 +352,14 @@ export function DiscoveryPanel({ onConfirmed }: Props) {
             className="flex items-center gap-2 gradient-brand text-white px-6 py-2.5 rounded-xl text-sm font-semibold hover:opacity-90 transition-opacity disabled:opacity-40 disabled:cursor-not-allowed"
           >
             {phase === "confirming" ? (
-              <><Loader2 className="h-4 w-4 animate-spin" /> Saving...</>
+              <>
+                <Loader2 className="h-4 w-4 animate-spin" /> Saving...
+              </>
             ) : (
               <>
                 <CheckCircle className="h-4 w-4" />
-                Confirm {selected.size} competitor{selected.size !== 1 ? "s" : ""}
+                Confirm {selected.size} competitor
+                {selected.size !== 1 ? "s" : ""}
               </>
             )}
           </button>

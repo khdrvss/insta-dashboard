@@ -17,26 +17,31 @@ interface RawCandidate {
 
 export async function POST(req: NextRequest) {
   const { userId } = await auth();
-  if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!userId)
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const user = await prisma.user.findUnique({ where: { clerkId: userId } });
-  if (!user) return NextResponse.json({ error: "User not found" }, { status: 404 });
-
-  if (!user.niche || !user.location) {
-    return NextResponse.json(
-      { error: "Complete your profile (niche + location) before discovering competitors" },
-      { status: 400 }
-    );
-  }
-
-  // Mock mode: return fixture data instantly
+  // Mock mode: return fixture data instantly (no DB needed)
   if (process.env.USE_MOCK_DATA === "true") {
-    await new Promise((r) => setTimeout(r, 2000)); // simulate discovery time
+    await new Promise((r) => setTimeout(r, 2000));
     return NextResponse.json({
       candidates: mockData.candidates,
       total_scanned: mockData.total_scanned,
       mock: true,
     });
+  }
+
+  const user = await prisma.user.findUnique({ where: { clerkId: userId } });
+  if (!user)
+    return NextResponse.json({ error: "User not found" }, { status: 404 });
+
+  if (!user.niche || !user.location) {
+    return NextResponse.json(
+      {
+        error:
+          "Complete your profile (niche + location) before discovering competitors",
+      },
+      { status: 400 },
+    );
   }
 
   // ── Live discovery ──────────────────────────────────────────────────────────
@@ -47,7 +52,7 @@ export async function POST(req: NextRequest) {
   if (candidates.length === 0) {
     return NextResponse.json(
       { error: "No candidates found. Try broadening your niche description." },
-      { status: 404 }
+      { status: 404 },
     );
   }
 
@@ -55,7 +60,11 @@ export async function POST(req: NextRequest) {
   const prompt = buildCompetitorFilterPrompt({
     niche: user.niche,
     location: user.location,
-    candidates: candidates.map((c) => ({ handle: c.handle, bio: c.bio, followers: c.followers })),
+    candidates: candidates.map((c) => ({
+      handle: c.handle,
+      bio: c.bio,
+      followers: c.followers,
+    })),
   });
 
   const message = await anthropic.messages.create({
@@ -64,14 +73,19 @@ export async function POST(req: NextRequest) {
     messages: [{ role: "user", content: prompt }],
   });
 
-  const raw = message.content[0].type === "text" ? message.content[0].text : "{}";
+  const raw =
+    message.content[0].type === "text" ? message.content[0].text : "{}";
   const jsonMatch = raw.match(/\{[\s\S]*\}/);
   if (!jsonMatch) {
     return NextResponse.json({ error: "AI filtering failed" }, { status: 500 });
   }
 
   const { filtered } = JSON.parse(jsonMatch[0]) as {
-    filtered: Array<{ handle: string; relevance_score: number; reasoning: string }>;
+    filtered: Array<{
+      handle: string;
+      relevance_score: number;
+      reasoning: string;
+    }>;
   };
 
   // Merge source info back in
@@ -98,7 +112,10 @@ export async function POST(req: NextRequest) {
   });
 }
 
-async function gatherCandidates(niche: string, location: string): Promise<RawCandidate[]> {
+async function gatherCandidates(
+  niche: string,
+  location: string,
+): Promise<RawCandidate[]> {
   const candidates: RawCandidate[] = [];
 
   // Apify hashtag scraper (if token is configured)
@@ -143,7 +160,7 @@ async function gatherCandidates(niche: string, location: string): Promise<RawCan
             search_terms: niche,
             fields: "page_name,page_id",
             limit: "25",
-          })
+          }),
       );
       if (res.ok) {
         const data = await res.json();
