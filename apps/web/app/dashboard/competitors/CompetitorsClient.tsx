@@ -25,6 +25,25 @@ export function CompetitorsClient({ initialConfirmed }: Props) {
     setConfirmed((prev) => prev.filter((c) => c.id !== id));
   }
 
+  function handleAdded(c: ConfirmedCompetitor) {
+    setConfirmed((prev) => {
+      if (prev.find((x) => x.id === c.id)) return prev;
+      return [c, ...prev];
+    });
+  }
+
+  async function handleAnalyzed() {
+    const res = await fetch("/api/competitors");
+    if (res.ok) {
+      const data = await res.json();
+      setConfirmed(
+        (data.competitors ?? []).filter(
+          (c: ConfirmedCompetitor & { confirmed: boolean }) => c.confirmed,
+        ),
+      );
+    }
+  }
+
   async function handleConfirmed(results?: ConfirmedResult[]) {
     if (results && results.length > 0) {
       setConfirmed(results as ConfirmedCompetitor[]);
@@ -129,7 +148,7 @@ export function CompetitorsClient({ initialConfirmed }: Props) {
               {c.confirmedH2} ({confirmed.length})
             </h2>
           </div>
-          <ConfirmedList competitors={confirmed} onRemove={handleRemove} />
+          <ConfirmedList competitors={confirmed} onRemove={handleRemove} onAdded={handleAdded} onAnalyzed={handleAnalyzed} />
         </div>
       )}
 

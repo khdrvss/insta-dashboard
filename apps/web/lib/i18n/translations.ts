@@ -8,6 +8,7 @@ export const t = {
       competitors: "Raqobatchilar",
       analysis:  "Tahlil",
       insights:  "Kontent tushunchalari",
+      hooks:     "Hook kutubxonasi",
       scripts:   "Skript generatori",
     },
     sidebar: {
@@ -94,7 +95,7 @@ export const t = {
         "Raqobatchilar bo'limida raqobatchilarni tasdiqlang, so'ng AI kontent tahlil dvigatelini ishga tushiring. Biz videolarni transkript qilamiz, hook'larni ajratamiz, tempni aniqlaymiz va nishadagi g'alaba naqshlarini topamiz.",
       runAnalysis:  "Kontent tahlilini boshlash",
       runningBtn:   "Boshlanmoqda...",
-      timeEst:      "~2–5 daqiqa · Whisper + Gemini + Claude",
+      timeEst:      "~2–5 daqiqa · Gemini + Claude",
       reAnalyze:    "Qayta tahlil",
       mockBadge:    "Test ma'lumotlari",
       complianceText:
@@ -122,8 +123,48 @@ export const t = {
       hookPatterns:   "Hook naqshlari",
       contentFormats: "Eng yaxshi kontent formatlari",
       powerWords:     "Qudratli so'zlar va iboralar",
-      trendingAudio:  "Trend audio kategoriyalar",
       hookScore:      "/100",
+    },
+
+    // ── Hook Library ──────────────────────────────────────────────────────
+    hooks: {
+      pageTitle:    "Hook kutubxonasi",
+      pageSubtitle: "Raqobatchilardan olingan eng yaxshi hook'lar",
+      searchPlaceholder: "Hook matnida qidirish...",
+      allTypes:     "Barchasi",
+      sortLikes:    "Ko'p like",
+      sortNew:      "Eng yangi",
+      sortAz:       "A–Z",
+      copyHook:     "Hook nusxalash",
+      copied:       "Nusxalandi!",
+      viewCaption:  "Sarlavhani ko'rish",
+      hideCaption:  "Yopish",
+      noHooks:      "Hali hook'lar yo'q",
+      noHooksDesc:  "Raqobatchi tahlilini boshlang — hook'lar avtomatik ajratib olinadi.",
+      hooks:        "ta hook",
+    },
+
+    // ── Script History ────────────────────────────────────────────────────
+    history: {
+      tab:          "Tarix",
+      generate:     "Yaratish",
+      noHistory:    "Hali saqlangan skriptlar yo'q",
+      noHistoryDesc: "Skript yaratgandan so'ng, ular bu yerda saqlanadi.",
+      variations:   "ta variant",
+      expand:       "Batafsil",
+      collapse:     "Yopish",
+    },
+
+    // ── My Performance ────────────────────────────────────────────────────
+    performance: {
+      title:        "Mening kontentim samaradorligi",
+      avgEr:        "O'rtacha ER",
+      bestTime:     "Eng yaxshi vaqt",
+      bestFormat:   "Eng yaxshi format",
+      topPosts:     "Eng yaxshi postlar",
+      worstPosts:   "Takomillashtirish kerak",
+      connect:      "Instagram ulab, kontent samaradorligini kuzating",
+      noData:       "Ma'lumot yo'q",
     },
 
     // ── Script Generator ──────────────────────────────────────────────────
@@ -222,7 +263,7 @@ export const t = {
         "Cheksiz AI skriptlar",
         "Cheksiz raqobatchilarni aniqlash",
         "To'liq kontent tahlil dvigatel",
-        "Whisper + Gemini video tahlili",
+        "Gemini + Claude video tahlili",
         "Pinecone RAG-asosida skriptlar",
         "Recharts ishlash paneli",
         "Ustuvor qo'llab-quvvatlash",
@@ -237,6 +278,7 @@ export const t = {
       competitors: "Competitors",
       analysis:    "Analysis",
       insights:    "Content Insights",
+      hooks:       "Hook Library",
       scripts:     "Script Generator",
     },
     sidebar: {
@@ -319,7 +361,7 @@ export const t = {
         "Confirm competitors in the Competitors tab, then run the AI content analysis engine. We'll transcribe videos, extract hooks, detect pacing, and surface the winning patterns in your niche.",
       runAnalysis:  "Run Content Analysis",
       runningBtn:   "Starting...",
-      timeEst:      "~2–5 min · uses Whisper + Gemini + Claude",
+      timeEst:      "~2–5 min · Gemini + Claude",
       reAnalyze:    "Re-analyze",
       mockBadge:    "Mock data",
       complianceText:
@@ -346,8 +388,45 @@ export const t = {
       hookPatterns:   "Hook Patterns",
       contentFormats: "Best Content Formats",
       powerWords:     "Power Words & Phrases",
-      trendingAudio:  "Trending Audio Categories",
       hookScore:      "/100",
+    },
+
+    hooks: {
+      pageTitle:    "Hook Library",
+      pageSubtitle: "Best hooks extracted from competitor content",
+      searchPlaceholder: "Search hook text...",
+      allTypes:     "All types",
+      sortLikes:    "Most likes",
+      sortNew:      "Newest",
+      sortAz:       "A–Z",
+      copyHook:     "Copy hook",
+      copied:       "Copied!",
+      viewCaption:  "View caption",
+      hideCaption:  "Hide",
+      noHooks:      "No hooks yet",
+      noHooksDesc:  "Run competitor analysis — hooks will be extracted automatically.",
+      hooks:        "hooks",
+    },
+
+    history: {
+      tab:          "History",
+      generate:     "Generate",
+      noHistory:    "No saved scripts yet",
+      noHistoryDesc: "Scripts you generate will be saved here.",
+      variations:   "variations",
+      expand:       "Show all",
+      collapse:     "Collapse",
+    },
+
+    performance: {
+      title:        "My Content Performance",
+      avgEr:        "Avg ER",
+      bestTime:     "Best time",
+      bestFormat:   "Best format",
+      topPosts:     "Top posts",
+      worstPosts:   "Needs improvement",
+      connect:      "Connect Instagram to track content performance",
+      noData:       "No data",
     },
 
     scripts: {
@@ -443,7 +522,7 @@ export const t = {
         "Unlimited AI script generations",
         "Unlimited competitor discovery",
         "Full content analysis engine",
-        "Whisper + Gemini video analysis",
+        "Gemini + Claude video analysis",
         "Pinecone RAG-powered scripts",
         "Recharts performance dashboards",
         "Priority support",

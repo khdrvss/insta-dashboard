@@ -4,19 +4,22 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   BarChart3, Brain, Lightbulb, Sparkles, Users, Wand2,
-  ChevronRight, Instagram
+  ChevronRight, Instagram, Loader2, BookOpen,
 } from "lucide-react";
 import { useLang } from "@/lib/i18n/context";
+import { useScripts } from "@/lib/scripts-context";
 
 export function Sidebar() {
   const pathname = usePathname();
   const { T } = useLang();
+  const { loading: scriptsLoading } = useScripts();
 
   const NAV_ITEMS = [
     { href: "/dashboard",             label: T.nav.profile,     icon: Instagram, exact: true },
     { href: "/dashboard/competitors", label: T.nav.competitors, icon: Users },
     { href: "/dashboard/analysis",    label: T.nav.analysis,    icon: BarChart3 },
     { href: "/dashboard/insights",    label: T.nav.insights,    icon: Lightbulb },
+    { href: "/dashboard/hooks",       label: T.nav.hooks,       icon: BookOpen },
     { href: "/dashboard/scripts",     label: T.nav.scripts,     icon: Wand2, highlight: true },
   ];
 
@@ -66,9 +69,12 @@ export function Sidebar() {
                 <ChevronRight className="h-3.5 w-3.5 text-violet-400 opacity-70" />
               )}
               {highlight && !active && (
-                <span className="text-xs px-1.5 py-0.5 rounded-full bg-pink-500/20 text-pink-400 font-medium">
-                  AI
-                </span>
+                scriptsLoading
+                  ? <Loader2 className="h-3.5 w-3.5 text-pink-400 animate-spin flex-shrink-0" />
+                  : <span className="text-xs px-1.5 py-0.5 rounded-full bg-pink-500/20 text-pink-400 font-medium">AI</span>
+              )}
+              {highlight && active && scriptsLoading && (
+                <Loader2 className="h-3.5 w-3.5 text-violet-400 animate-spin flex-shrink-0" />
               )}
             </Link>
           );

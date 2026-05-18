@@ -1,334 +1,334 @@
 # API Reference
 
-The project has two API surfaces: **Next.js API Routes** (for frontend orchestration, auth, DB) and **FastAPI Python** (for AI processing, scraping).
-
----
-
-## FastAPI Backend
-
-**Base URL:** `http://localhost:8000`  
-**Auth:** Internal requests include `X-Internal-Secret` header
-
-### Routes
-
-#### `GET /health`
-
-Health check endpoint.
-
-**Response:** `{ "status": "ok" }`
-
----
-
-### `GET /auth/status`
-
-Check authentication status.
-
----
-
-### Profile
-
-#### `GET /profile/{clerk_id}`
-
-Get user profile.
-
-**Mock:** Returns mock profile data  
-**Live:** Fetches from Postgres via Prisma
-
-#### `PUT /profile/{clerk_id}`
-
-Update user profile fields.
-
----
-
-### Competitors
-
-#### `POST /competitors/discover`
-
-Discover competitors for a niche.
-
-**Request Body:**
-
-```json
-{
-  "niche": "construction Tashkent",
-  "location": "Tashkent",
-  "hashtags": ["#qurilish", "#ta'mirlash"]
-}
-```
-
-**Mock:** Returns fixture data from `mock/competitors.json`  
-**Live:** Gathers candidates via Apify hashtag scraper + Meta Ad Library, deduplicates, AI-filters via Claude
-
-**Response:**
-
-```json
-{
-  "candidates": [
-    {
-      "handle": "stroyka_uz",
-      "displayName": "Stroyka Uzbekistan",
-      "profilePicUrl": "...",
-      "bio": "...",
-      "followersEst": 45200,
-      "relevanceScore": 88,
-      "source": "hashtag_search",
-      "aiReasoning": "Matches niche with high relevance"
-    }
-  ]
-}
-```
-
-#### `GET /competitors/mock`
-
-Return mock competitor data directly.
-
----
-
-### Analysis
-
-#### `POST /analyze/start`
-
-Start an async content analysis job.
-
-**Mock:** Returns immediately with `"status": "complete"` and mock analysis data  
-**Live:** Generates UUID, runs background worker
-
-**Response (mock):**
-
-```json
-{
-  "status": "complete",
-  "jobId": "mock_job_001",
-  "video_analyses": [...],
-  "niche_summary": {...}
-}
-```
-
-**Response (live):**
-
-```json
-{
-  "status": "queued",
-  "jobId": "uuid-string"
-}
-```
-
-#### `GET /analyze/job/{job_id}`
-
-Poll job status.
-
-**Response:**
-
-```json
-{
-  "status": "running",
-  "progress": 60,
-  "step": "Analyzing content..."
-}
-```
-
-#### `GET /analyze/mock/video-analyses`
-
-Return mock video analysis data.
-
-#### `GET /analyze/mock/niche-summary`
-
-Return mock niche intelligence summary.
-
----
-
-### Scripts
-
-#### `POST /scripts/generate`
-
-Generate script variations.
-
-**Request Body:**
-
-```json
-{
-  "goal": "brand_awareness",
-  "platform": "reels",
-  "tone": "bold",
-  "length": 30,
-  "niche": "construction",
-  "patterns": ["pattern 1", "pattern 2"]
-}
-```
-
-**Mock:** Returns fixture data from `mock/generated_scripts.json`  
-**Live:** Calls `script_generator.py` which uses Claude with RAG patterns
-
-**Response:** Array of 3 script variations
-
----
-
-## Next.js API Routes
+InstaIntel has a single API surface: **Next.js API Routes** in `apps/web/app/api/`. All AI, scraping, and data logic runs here — there is no separate Python/FastAPI backend.
 
 **Base URL:** `http://localhost:3000`  
-**Auth:** Clerk session (or mock user in dev mode)
+**Auth:** httpOnly cookie (`session=authenticated`) in dev; Clerk session in production  
+**All routes** return JSON. Errors return `{ error: "message" }`.
 
-### Analysis
+---
 
-#### `POST /api/analyze/start`
+## Analysis
 
-Start analysis.  
-**Mock:** Returns mock analysis results immediately  
-**Live:** Creates `AnalysisJob` in DB, calls FastAPI `/analyze/start`
+### `POST /api/analyze/start`
 
-#### `GET /api/analyze/results`
+Start content analysis for all confirmed competitors.
 
-Get analysis results.  
-**Mock:** Returns `mock/analysis_results.json`  
-**Live:** Builds competitor stats, top posts, engagement trends from DB
+**Response (mock):** `{ job_id: "mock-job-001", status: "done", progress: 100, mock: true }`
 
-#### `GET /api/analyze/[jobId]`
+**Response (live):** `{ job_id, status: "done", analysed_count: N }`
+
+---
+
+### `GET /api/analyze/results`
+
+Get full analysis results — competitor stats, post breakdown, and aggregated intelligence.
+
+**Response:**
+
+```json
+{
+  "competitors": [
+    {
+      "id": "...",
+      "handle": "buston_uz",
+      "displayName": "Buston Village",
+      "followersEst": 12400,
+      "avg_likes": 340,
+      "avg_comments": 22,
+      "avg_views_est": 5800,
+      "hook_examples": ["Toshkent yaqinida 3 xonali kotedj...", "..."],
+      "value_prop_examples": ["Premium sifat, qulay narx", "..."],
+      "top_hashtags": ["kotedj", "uysotuv", "toshkent"],
+      "sentiment_breakdown": { "positive": 8, "neutral": 4, "negative": 1 },
+      "pacing_dist": { "fast": 6, "medium": 5, "slow": 2 }
+    }
+  ],
+  "top_posts": [
+    {
+      "id": "...",
+      "caption": "...",
+      "likesEst": 890,
+      "commentsEst": 45,
+      "hook_text": "Arzon narxda kotedj xohlaysizmi?",
+      "hook_type": "question",
+      "cta_text": "DM yuboring",
+      "power_words": ["arzon", "premium", "qulay"],
+      "effectiveness_score": 87,
+      "score": 87
+    }
+  ],
+  "engagement_trend": [
+    { "week": "12 May", "avg_er": 4.2, "top_er": 7.8 }
+  ],
+  "niche_summary": {
+    "top_hook_styles": [
+      { "type": "question", "effectiveness_score": 85, "score": 85, "example": "Kotedj olmoqchimisiz?" }
+    ],
+    "top_content_formats": ["Ta'limiy", "Guvohnoma", "O'zgarish"],
+    "power_phrases": ["arzon narx", "premium sifat", "tez yetkazib berish"],
+    "best_posting_times": [
+      { "time": "18:00–20:00", "days": "Juma, Shanba", "frequency": "yuqori" }
+    ]
+  },
+  "hashtag_cloud": [
+    { "tag": "kotedj", "count": 34 },
+    { "tag": "uysotuv", "count": 28 }
+  ],
+  "hook_breakdown": [
+    { "type": "Savol", "count": 18, "pct": 45 },
+    { "type": "Shok", "count": 10, "pct": 25 }
+  ],
+  "sentiment_breakdown": [
+    { "label": "Ijobiy", "count": 28, "pct": 70 }
+  ],
+  "pacing_breakdown": [
+    { "label": "Tez sur'at", "count": 20, "pct": 50 }
+  ],
+  "content_format_breakdown": [
+    { "label": "Ta'limiy (Educational)", "count": 15, "pct": 37 }
+  ],
+  "top_ctas": ["DM yuboring", "Bog'laning", "Havolaga o'ting"],
+  "power_words": ["premium", "arzon", "yangi", "qulay"],
+  "total_posts_analyzed": 40
+}
+```
+
+---
+
+### `GET /api/analyze/[jobId]`
 
 Poll analysis job status.
 
----
-
-### Auth
-
-#### `GET /api/auth/instagram`
-
-Initiate Instagram OAuth flow. Generates CSRF state token, redirects to Facebook OAuth dialog.
-
-#### `GET /api/auth/instagram/callback`
-
-Handle OAuth callback. Full pipeline:
-
-1. Exchange code for short-lived token
-2. Exchange for 60-day long-lived token
-3. List Facebook Pages
-4. Find Instagram Business Account
-5. Fetch profile + recent 30 posts
-6. Calculate engagement metrics, content mix, top hashtags
-7. Store in DB via Prisma transaction
-
-**Error codes:** `access_denied`, `no_pages`, `no_ig_business`, `invalid_state`, `server_error`
+**Response:** `{ job_id, status: "pending"|"running"|"done"|"failed", progress: 0-100, error? }`
 
 ---
 
-### Billing
+## Competitors
 
-#### `POST /api/billing/create-checkout`
+### `GET /api/competitors`
 
-Create Stripe Checkout session.  
-**Dev mode:** Returns direct URL without Stripe  
-**Live:** Creates subscription with `STRIPE_PRO_MONTHLY_PRICE_ID` or `STRIPE_PRO_ANNUAL_PRICE_ID`
+List all confirmed competitors for current user.
+
+**Response:** `{ competitors: [{ id, handle, displayName, relevanceScore, confirmed, _count: { posts: N } }] }`
 
 ---
 
-### Competitors
+### `POST /api/competitors/discover`
 
-#### `GET /api/competitors`
+Run competitor discovery pipeline.
 
-List confirmed competitors for current user, sorted by relevance.
+**Query params:** `?force=true` — bypass 7-day cache
 
-#### `POST /api/competitors/discover`
-
-Run full competitor discovery.  
-**Mock:** Returns fixture data after 2s simulated delay  
-**Live:** Runs Apify + Ad Library gathering, Claude filtering via `@instagram-dashboard/ai` prompts
-
-#### `POST /api/competitors/confirm`
-
-Confirm selected competitors. Zod-validated. Max 20 competitors.
-
-**Request Body:**
+**Response:**
 
 ```json
 {
   "candidates": [
     {
-      "handle": "stroyka_uz",
-      "displayName": "Stroyka Uzbekistan",
-      "profilePicUrl": "...",
-      "bio": "...",
-      "followersEst": 45200,
-      "relevanceScore": 88,
+      "handle": "yangikotedj_uz",
+      "displayName": "Yangi Kotedj",
+      "followersEst": 8400,
+      "relevanceScore": 82,
+      "source": "hashtag_search",
+      "aiReasoning": "Premium real estate developer in Tashkent region with active property listings"
+    }
+  ],
+  "total_scanned": 47,
+  "mock": false
+}
+```
+
+---
+
+### `DELETE /api/competitors/discover`
+
+Clear all unconfirmed competitors (reset discovery cache).
+
+**Response:** `{ deleted: N }`
+
+---
+
+### `POST /api/competitors/confirm`
+
+Confirm selected competitors.
+
+**Request body:**
+
+```json
+{
+  "candidates": [
+    {
+      "handle": "yangikotedj_uz",
+      "displayName": "Yangi Kotedj",
+      "followersEst": 8400,
+      "relevanceScore": 82,
       "discoverySource": "hashtag_search"
     }
   ]
 }
 ```
 
-#### `DELETE /api/competitors/[id]`
-
-Remove a tracked competitor.
-
-#### `PATCH /api/competitors/[id]`
-
-Update competitor (confirm/unconfirm).
+**Response:** `{ confirmed: N, competitors: [...] }`
 
 ---
 
-### Profile
+### `DELETE /api/competitors/[id]`
 
-#### `GET /api/profile`
+Remove a tracked competitor (hard delete).
 
-Get user profile + Instagram account data.
-
-#### `GET /api/profile/posts`
-
-Get user's Instagram posts sorted by engagement rate.
-
-#### `POST /api/profile/posts`
-
-Trigger manual re-sync of Instagram posts (redirects to OAuth if token expired).
+**Response:** `{ deleted: true }`
 
 ---
 
-### Scripts
+### `PATCH /api/competitors/[id]`
 
-#### `POST /api/scripts/generate`
+Update competitor confirmation status.
 
-Generate 3 script variations.  
-**Mock:** Returns fixture data after 1.5s delay  
-**Live:** Validates input, checks free tier rate limit (5/month), calls Claude via `@instagram-dashboard/ai` prompts, logs to DB
+**Request body:** `{ confirmed: true | false }`
 
-**Request Body:**
+**Response:** `{ updated: N }`
+
+---
+
+## Scripts
+
+### `POST /api/scripts/generate`
+
+Generate 3 Uzbek-language video script variations.
+
+**Request body:**
 
 ```json
 {
   "goal": "brand_awareness",
   "platform": "reels",
-  "tone": "bold",
-  "length": 30
+  "lengthSecs": 30,
+  "tone": "friendly"
 }
 ```
 
----
+- `goal`: `"brand_awareness"` | `"direct_sales"` | `"lead_generation"`
+- `platform`: `"reels"` | `"ads"`
+- `lengthSecs`: `15` | `30` | `60`
+- `tone`: `"formal"` | `"friendly"` | `"bold"` | `"educational"`
 
-### User
-
-#### `POST /api/user/onboard`
-
-Save onboarding form data. Zod-validated.
-
-**Request Body:**
+**Response:**
 
 ```json
 {
-  "instagramHandle": "stroycorp_demo",
-  "niche": "construction Tashkent",
-  "location": "Tashkent",
-  "targetAudience": "Homeowners looking to renovate",
-  "brandVoice": "bold",
-  "products": "Renovation services, construction materials"
+  "scripts": [
+    {
+      "variation": 1,
+      "concept_title": "Toshkent yaqinida orzular uyi",
+      "hook_type": "question",
+      "borrowed_pattern": "Muammo-yechim-natija formulasi",
+      "scenes": [
+        {
+          "timecode": "0:00–0:05",
+          "visual": "Aero-video: ko'k osmon fonida zamonaviy kotedj",
+          "on_screen_text": "Toshkentdan 20 daqiqa. Narxini bilasizmi?"
+        }
+      ],
+      "caption": "Buston Village — bu nafaqat uy, bu hayot tarzi. Batafsil: link in bio 👇",
+      "hashtags": ["bustonvillage", "kotedj", "uysotuv", "toshkent", "premiumuy"],
+      "thumbnail_idea": "Katta oyna va zamonaviy fasad — oltin soat nuri",
+      "predicted_strength": "hook"
+    }
+  ]
 }
 ```
 
+**Rate limit:** 5 scripts/month on free plan → 429 if exceeded
+
 ---
 
-### Webhooks
+## Profile
 
-#### `POST /api/webhooks/stripe`
+### `GET /api/profile`
 
-Stripe webhook handler. Verifies signature with `STRIPE_WEBHOOK_SECRET`.
+Get user profile + Instagram account.
 
-**Events handled:**
+**Response:** `{ user: { id, email, niche, location, brandVoice, plan }, instagram: {...} | null, connected: bool }`
 
-- `checkout.session.completed` — Sets user plan to `pro`
-- `customer.subscription.deleted` — Sets user plan to `free`
+---
+
+### `GET /api/profile/posts`
+
+Get user's Instagram posts sorted by engagement rate.
+
+**Response:** `{ posts: [{ id, mediaType, caption, likesCount, commentsCount, engagementRate, postedAt }] }`
+
+---
+
+### `POST /api/profile/posts`
+
+Trigger manual re-sync of Instagram posts.
+
+**Response:** `{ synced: true }` or `{ redirect: "/api/auth/instagram" }` if token expired
+
+---
+
+## Auth (Instagram OAuth)
+
+### `GET /api/auth/instagram`
+
+Initiate Instagram OAuth flow. Redirects to Facebook OAuth dialog.
+
+### `GET /api/auth/instagram/callback`
+
+Handle OAuth callback. Exchanges code for long-lived token, fetches profile + posts, saves to DB.
+
+**Redirect on success:** `/dashboard?ig_connected=1`
+
+**Error codes:** `ig_error=access_denied|no_pages|no_ig_business|invalid_state|server_error`
+
+---
+
+## User
+
+### `POST /api/user/onboard`
+
+Save onboarding form data.
+
+**Request body:**
+
+```json
+{
+  "niche": "uy-joy real estate Toshkent",
+  "location": "Toshkent",
+  "instagramHandle": "bustonvillage",
+  "targetAudience": "Toshkentda premium uy izlayotgan oilalar",
+  "brandVoice": "friendly",
+  "productsServices": "Premium kotedj qishlog'i, 3-5 xonali kotedj uylari"
+}
+```
+
+**Response:** `{ success: true, user: { id, niche } }`
+
+---
+
+## Billing
+
+### `POST /api/billing/create-checkout`
+
+Create Stripe Checkout session.
+
+**Request body:** `{ priceId?: string, interval?: "monthly" | "annual" }`
+
+**Response:** `{ url: "https://checkout.stripe.com/..." }`  
+**Dev mode (no Stripe keys):** `{ url: "/dashboard?upgrade=demo" }`
+
+---
+
+## Webhooks
+
+### `POST /api/webhooks/stripe`
+
+Handle Stripe webhook events. Verifies signature with `STRIPE_WEBHOOK_SECRET`.
+
+**Events:**
+- `checkout.session.completed` → set user plan to `"pro"`
+- `customer.subscription.deleted` → set user plan to `"free"`
+
+**Response:** `{ received: true }`

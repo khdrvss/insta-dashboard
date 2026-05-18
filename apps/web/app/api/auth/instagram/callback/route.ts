@@ -4,8 +4,6 @@ import { prisma } from "@instagram-dashboard/db";
 import {
   exchangeCodeForToken,
   getLongLivedToken,
-  getFacebookPages,
-  getIGBusinessAccount,
   getIGProfile,
   getIGMedia,
   calculateEngagementMetrics,
@@ -41,34 +39,13 @@ export async function GET(req: NextRequest) {
     // 2. Get long-lived token (60 days)
     const { token: longToken, expiresIn } = await getLongLivedToken(shortToken);
 
-    // 3. Get Facebook Pages
-    const pages = await getFacebookPages(longToken);
-    if (!pages.length) {
-      return NextResponse.redirect(`${APP_URL}/dashboard?ig_error=no_pages`);
-    }
-
-    // 4. Find the Instagram Business Account
-    let igUserId: string | null = null;
-    let pageToken: string = longToken;
-
-    for (const page of pages) {
-      const igAccount = await getIGBusinessAccount(page.id, page.access_token);
-      if (igAccount) {
-        igUserId = igAccount.id;
-        pageToken = page.access_token;
-        break;
-      }
-    }
-
-    if (!igUserId) {
-      return NextResponse.redirect(`${APP_URL}/dashboard?ig_error=no_ig_business`);
-    }
-
-    // 5. Fetch profile + recent media in parallel
+    // 3. Fetch profile + recent media in parallel using the long-lived token
     const [profile, media] = await Promise.all([
-      getIGProfile(igUserId, pageToken),
-      getIGMedia(igUserId, pageToken, 30),
+      getIGProfile(longToken),
+      getIGMedia(longToken, 30),
     ]);
+
+    const igUserId = profile.id;
 
     const metrics = calculateEngagementMetrics(media, profile.followers_count);
 

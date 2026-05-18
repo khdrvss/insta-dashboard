@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Lightbulb, AlertCircle, Music, Hash, Zap, Clock, Loader2 } from "lucide-react";
+import { Lightbulb, AlertCircle, Hash, Zap, Clock, Loader2 } from "lucide-react";
 import { useLang } from "@/lib/i18n/context";
 
 interface NicheSummary {
@@ -10,7 +10,6 @@ interface NicheSummary {
   top_content_formats: Array<{ format: string; avg_engagement_lift: number; description: string }>;
   power_phrases: string[];
   best_posting_patterns: { times: string[]; days: string[]; frequency: string };
-  trending_audio_categories: string[];
   mock?: boolean;
 }
 
@@ -118,20 +117,6 @@ export default function InsightsPage() {
             </div>
           </InsightCard>
 
-          {/* Trending audio */}
-          <InsightCard icon={Music} title={ins.trendingAudio} color="green">
-            <div className="space-y-2">
-              {summary!.trending_audio_categories.map((name, i) => (
-                <div key={name} className="flex items-center justify-between py-2 border-b border-white/5 last:border-0">
-                  <div className="flex items-center gap-2">
-                    <Music className="h-3.5 w-3.5 text-green-400" />
-                    <span className="text-sm text-white">{name}</span>
-                  </div>
-                  <span className="text-xs text-white/30">#{i + 1}</span>
-                </div>
-              ))}
-            </div>
-          </InsightCard>
         </div>
       )}
     </div>

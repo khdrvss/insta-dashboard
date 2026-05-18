@@ -18,6 +18,15 @@ export async function GET() {
 
   if (!user) return NextResponse.json({ error: "User not found" }, { status: 404 });
 
+  const ig = user.instagramAccount;
+  const instagram = ig
+    ? {
+        ...ig,
+        topHashtags: typeof ig.topHashtags === "string" ? JSON.parse(ig.topHashtags) : (ig.topHashtags ?? []),
+        contentMix:  typeof ig.contentMix  === "string" ? JSON.parse(ig.contentMix)  : (ig.contentMix  ?? {}),
+      }
+    : null;
+
   return NextResponse.json({
     user: {
       id: user.id,
@@ -28,7 +37,7 @@ export async function GET() {
       brandVoice: user.brandVoice,
       plan: user.plan,
     },
-    instagram: user.instagramAccount,
+    instagram,
     connected: !!user.metaAccessToken,
   });
 }

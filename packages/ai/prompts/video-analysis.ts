@@ -1,7 +1,6 @@
 export const VIDEO_ANALYSIS_PROMPT_VERSION = "v1.0.0";
 
 export function buildVideoAnalysisPrompt(params: {
-  transcript?: string;
   caption?: string;
   niche: string;
 }): string {
@@ -9,7 +8,6 @@ export function buildVideoAnalysisPrompt(params: {
 
 NICHE: ${params.niche}
 
-${params.transcript ? `TRANSCRIPT:\n${params.transcript}\n` : ""}
 ${params.caption ? `CAPTION:\n${params.caption}\n` : ""}
 
 Analyze this video content and return a JSON object with this EXACT structure:
@@ -23,11 +21,10 @@ Analyze this video content and return a JSON object with this EXACT structure:
   "sentiment": "positive" | "urgent" | "educational" | "entertaining" | "inspirational",
   "content_format": "string (e.g. 'tutorial', 'testimonial', 'day-in-life', 'product-demo', 'trend')",
   "power_words": ["array", "of", "high", "impact", "words", "used"],
-  "audio_track_name": "string or null (trending audio if identifiable)",
   "engagement_drivers": ["what makes this content engaging"]
 }
 
-Be specific and extract actual text from the transcript/caption. If information is not available, use null.`;
+Be specific and extract actual text from the caption. If information is not available, use null.`;
 }
 
 export function buildNicheSummaryPrompt(params: {
@@ -70,7 +67,6 @@ Synthesize this data into a comprehensive niche intelligence report. Return EXAC
     "days": ["day names"],
     "frequency": "string (e.g. '5-7x per week')"
   },
-  "trending_audio_categories": ["list of audio style categories"],
   "cta_effectiveness": [
     {
       "cta": "string",

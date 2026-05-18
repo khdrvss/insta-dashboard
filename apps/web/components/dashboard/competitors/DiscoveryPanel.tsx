@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Search,
   Loader2,
@@ -35,7 +35,7 @@ interface Props {
 
 export function DiscoveryPanel({ onConfirmed }: Props) {
   const [phase, setPhase] = useState<
-    "idle" | "discovering" | "review" | "confirming" | "done"
+    "idle" | "setup" | "discovering" | "review" | "confirming" | "done"
   >("idle");
   const [stepIndex, setStepIndex] = useState(0);
   const [candidates, setCandidates] = useState<Candidate[]>([]);
@@ -44,8 +44,62 @@ export function DiscoveryPanel({ onConfirmed }: Props) {
   const [error, setError] = useState<string | null>(null);
   const [manualHandle, setManualHandle] = useState("");
   const [manualAdding, setManualAdding] = useState(false);
+  const [setupNiche, setSetupNiche] = useState("Premium real estate, real estate, Toshkent, Tashkent");
+  const [setupLocation, setSetupLocation] = useState("Toshkent, O'zbekiston");
+  const [setupSaving, setSetupSaving] = useState(false);
 
-  async function runDiscovery() {
+  // On mount: load cached results from DB without triggering Apify
+  useEffect(() => {
+    fetch("/api/competitors")
+      .then(r => r.ok ? r.json() : null)
+      .then(data => {
+        if (!data) return;
+        const all = data.competitors ?? [];
+        if (all.length === 0) return;
+        // Map DB rows to the candidate shape the review panel expects
+        const mapped = all.map((c: any) => ({
+          handle: c.handle,
+          relevance_score: c.relevanceScore ?? 0,
+          reasoning: c.relevanceReason ?? "",
+          source: c.discoverySource ?? "hashtag_search",
+          followers_est: c.followersEst,
+          confirmed: c.confirmed,
+        }));
+        setCandidates(mapped);
+        setSelected(new Set(mapped.filter((c: any) => c.confirmed).map((c: any) => c.handle)));
+        setTotalScanned(mapped.length);
+        setPhase("review");
+      })
+      .catch(() => {/* no cached data, stay idle */});
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  async function saveSetup() {
+    if (!setupNiche.trim() || !setupLocation.trim()) return;
+    setSetupSaving(true);
+    setError(null);
+    try {
+      const res = await fetch("/api/user/onboard", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ niche: setupNiche, location: setupLocation }),
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        setError(data.error ?? "Failed to save profile");
+        setSetupSaving(false);
+        return;
+      }
+      // Profile saved — clear spinner before discovery changes phase
+      setSetupSaving(false);
+      await runDiscovery();
+    } catch {
+      setError("Failed to save profile — please try again");
+      setSetupSaving(false);
+    }
+  }
+
+  async function runDiscovery(force = false) {
     setPhase("discovering");
     setError(null);
     setStepIndex(0);
@@ -56,13 +110,18 @@ export function DiscoveryPanel({ onConfirmed }: Props) {
     }, 600);
 
     try {
-      const res = await fetch("/api/competitors/discover", { method: "POST" });
+      const url = force ? "/api/competitors/discover?force=true" : "/api/competitors/discover";
+      const res = await fetch(url, { method: "POST" });
       const data = await res.json();
       clearInterval(stepInterval);
 
       if (!res.ok) {
-        setError(data.error ?? "Discovery failed");
-        setPhase("idle");
+        if (data.error?.includes("niche") || data.error?.includes("location") || data.error?.includes("profile")) {
+          setPhase("setup");
+        } else {
+          setError(data.error ?? "Discovery failed");
+          setPhase("idle");
+        }
         return;
       }
 
@@ -121,11 +180,11 @@ export function DiscoveryPanel({ onConfirmed }: Props) {
       .filter((c) => selected.has(c.handle))
       .map((c) => ({
         handle: c.handle,
-        displayName: c.display_name,
-        relevanceScore: c.relevance_score,
-        relevanceReason: c.reasoning,
-        followersEst: c.followers_est,
-        discoverySource: c.source,
+        ...(c.display_name != null ? { displayName: c.display_name } : {}),
+        relevanceScore: c.relevance_score ?? 0,
+        ...(c.reasoning ? { relevanceReason: c.reasoning } : {}),
+        ...(c.followers_est != null ? { followersEst: c.followers_est } : {}),
+        discoverySource: (c.source as "hashtag_search" | "ad_library" | "manual") ?? "hashtag_search",
       }));
 
     try {
@@ -168,6 +227,65 @@ export function DiscoveryPanel({ onConfirmed }: Props) {
     }
   }
 
+  // ── Setup (niche + location missing) ────────────────────────────────────────
+  if (phase === "setup") {
+    return (
+      <div className="rounded-2xl border border-white/10 bg-white/5 p-8 max-w-md mx-auto">
+        <div className="mb-6 text-center">
+          <div className="mx-auto mb-3 h-12 w-12 rounded-xl bg-violet-500/20 flex items-center justify-center">
+            <Search className="h-6 w-6 text-violet-400" />
+          </div>
+          <h3 className="text-white font-semibold text-lg">Quick setup</h3>
+          <p className="text-white/40 text-sm mt-1">
+            Tell us your niche and location so we can find relevant competitors
+          </p>
+        </div>
+
+        {error && (
+          <div className="mb-4 flex items-center gap-2 text-sm text-red-400">
+            <AlertCircle className="h-4 w-4 flex-shrink-0" />
+            {error}
+          </div>
+        )}
+
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm text-white/60 mb-1.5">Your niche / industry</label>
+            <input
+              type="text"
+              placeholder="e.g. Premium real estate, Toshkent"
+              value={setupNiche}
+              onChange={(e) => setSetupNiche(e.target.value)}
+              className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-white/30 focus:outline-none focus:ring-2 focus:ring-violet-500/50"
+            />
+          </div>
+          <div>
+            <label className="block text-sm text-white/60 mb-1.5">Location / market</label>
+            <input
+              type="text"
+              placeholder="e.g. Toshkent, O'zbekiston"
+              value={setupLocation}
+              onChange={(e) => setSetupLocation(e.target.value)}
+              className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-white/30 focus:outline-none focus:ring-2 focus:ring-violet-500/50"
+            />
+          </div>
+          <button
+            onClick={saveSetup}
+            disabled={!setupNiche.trim() || !setupLocation.trim() || setupSaving}
+            className="w-full flex items-center justify-center gap-2 bg-violet-600 hover:bg-violet-700 disabled:opacity-40 disabled:cursor-not-allowed text-white font-semibold py-3 rounded-xl transition-colors"
+          >
+            {setupSaving ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <Search className="h-4 w-4" />
+            )}
+            {setupSaving ? "Saving & searching…" : "Save & start discovery"}
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   // ── Idle state ──────────────────────────────────────────────────────────────
   if (phase === "idle") {
     return (
@@ -191,7 +309,7 @@ export function DiscoveryPanel({ onConfirmed }: Props) {
         )}
 
         <button
-          onClick={runDiscovery}
+          onClick={() => runDiscovery(false)}
           className="inline-flex items-center gap-2 gradient-brand text-white px-8 py-3.5 rounded-xl font-semibold hover:opacity-90 transition-opacity"
         >
           <Search className="h-4 w-4" />
@@ -200,6 +318,12 @@ export function DiscoveryPanel({ onConfirmed }: Props) {
         <p className="text-white/20 text-xs mt-3">
           ~30–60 seconds · uses AI analysis
         </p>
+        <button
+          onClick={() => runDiscovery(true)}
+          className="mt-2 text-xs text-white/20 hover:text-white/40 transition-colors underline underline-offset-2"
+        >
+          Force re-discover (uses Apify credits)
+        </button>
       </div>
     );
   }

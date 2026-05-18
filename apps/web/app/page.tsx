@@ -16,15 +16,9 @@ export default function LandingPage() {
           <div className="flex items-center gap-3">
             <Link
               href="/sign-in"
-              className="text-sm text-white/70 hover:text-white transition-colors px-4 py-2"
-            >
-              Sign in
-            </Link>
-            <Link
-              href="/dashboard"
               className="text-sm bg-violet-600 hover:bg-violet-700 text-white px-4 py-2 rounded-lg transition-colors font-medium"
             >
-              Dashboard →
+              Sign in →
             </Link>
           </div>
         </div>
@@ -34,7 +28,7 @@ export default function LandingPage() {
       <section className="mx-auto max-w-7xl px-6 pt-24 pb-20 text-center">
         <div className="inline-flex items-center gap-2 rounded-full border border-violet-500/30 bg-violet-500/10 px-4 py-1.5 text-sm text-violet-300 mb-8">
           <Zap className="h-3.5 w-3.5" />
-          Powered by Claude AI + Gemini + Whisper
+          Powered by Claude AI + Gemini
         </div>
 
         <h1 className="text-5xl md:text-7xl font-bold tracking-tight mb-6">
@@ -51,17 +45,11 @@ export default function LandingPage() {
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
           <Link
-            href="/dashboard"
+            href="/sign-in"
             className="flex items-center gap-2 bg-violet-600 hover:bg-violet-700 text-white px-8 py-4 rounded-xl transition-colors font-semibold text-lg"
           >
-            Start for free
+            Get started
             <ArrowRight className="h-5 w-5" />
-          </Link>
-          <Link
-            href="/sign-in"
-            className="text-white/60 hover:text-white px-8 py-4 transition-colors"
-          >
-            Already have an account?
           </Link>
         </div>
       </section>
@@ -82,7 +70,7 @@ export default function LandingPage() {
               icon: Brain,
               title: "Deep Content Analysis",
               description:
-                "Whisper transcribes competitor Reels, Gemini analyzes visual pacing and hooks, Claude extracts winning patterns. All AI-estimated and clearly labeled.",
+                "Gemini analyzes visual pacing and hooks, Claude extracts winning patterns. All AI-estimated and clearly labeled.",
               color: "text-pink-400",
               bg: "bg-pink-500/10 border-pink-500/20",
             },

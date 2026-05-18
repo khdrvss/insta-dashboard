@@ -25,7 +25,6 @@ interface ScriptScene {
   timecode: string;
   visual: string;
   on_screen_text: string | null;
-  audio: string;
 }
 
 interface Script {
@@ -34,7 +33,6 @@ interface Script {
   hook_type: string;
   borrowed_pattern: string;
   scenes: ScriptScene[];
-  suggested_audio_style?: string;
   caption: string;
   hashtags: string[];
   thumbnail_idea: string;
@@ -104,11 +102,12 @@ function section(emoji: string, title: string) {
 
 // ─── Scene table ─────────────────────────────────────────────────────────────
 function makeSceneTable(scenes: ScriptScene[]): Table {
-  const COL_WIDTHS = [12, 28, 25, 35]; // % of table width
+  const HEADERS = ["Timecode", "Visual Direction", "On-Screen Text"];
+  const COL_WIDTHS = [12, 50, 38]; // % of table width
 
   function headerCell(text: string) {
     return new TableCell({
-      width: { size: COL_WIDTHS[["Timecode", "Visual Direction", "On-Screen Text", "Audio / Voiceover"].indexOf(text)], type: WidthType.PERCENTAGE },
+      width: { size: COL_WIDTHS[HEADERS.indexOf(text)], type: WidthType.PERCENTAGE },
       shading: { type: ShadingType.SOLID, fill: PURPLE_HDR },
       verticalAlign: VerticalAlign.CENTER,
       children: [
@@ -119,7 +118,7 @@ function makeSceneTable(scenes: ScriptScene[]): Table {
             new TextRun({
               text,
               bold: true,
-              color: WHITE,   // explicitly white on purple bg
+              color: WHITE,
               size: 19,
               font: "Calibri",
             }),
@@ -174,7 +173,6 @@ function makeSceneTable(scenes: ScriptScene[]): Table {
           headerCell("Timecode"),
           headerCell("Visual Direction"),
           headerCell("On-Screen Text"),
-          headerCell("Audio / Voiceover"),
         ],
       }),
       // Data rows
@@ -193,11 +191,6 @@ function makeSceneTable(scenes: ScriptScene[]): Table {
             dataCell(scene.on_screen_text ?? "—", {
               colIndex: 2, rowIndex: i,
               color: scene.on_screen_text ? BLACK : GRAY,
-            }),
-            dataCell(`"${scene.audio}"`, {
-              colIndex: 3, rowIndex: i,
-              bold: false,   // ← no bold; explicit BLACK so Word theme can't whiteout the text
-              color: BLACK,
             }),
           ],
         })

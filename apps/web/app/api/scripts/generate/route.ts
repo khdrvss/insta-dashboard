@@ -1,7 +1,7 @@
 import { getAuth as auth } from "@/lib/mock-auth";
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@instagram-dashboard/db";
-import Anthropic from "@anthropic-ai/sdk";
+import OpenAI from "openai";
 import { buildScriptGenerationPrompt } from "@instagram-dashboard/ai";
 import { z } from "zod";
 import mockScripts from "@/mock/generated_scripts.json";
@@ -13,9 +13,12 @@ const generateSchema = z.object({
   tone: z.enum(["formal", "friendly", "bold", "educational"]).default("friendly"),
 });
 
-const anthropic = new Anthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY,
+const openai = new OpenAI({
+  apiKey: process.env.OPENROUTER_API_KEY,
+  baseURL: "https://openrouter.ai/api/v1",
 });
+// google/gemini-2.0-flash-001 — cheap, fast, excellent Uzbek/multilingual support
+const MODEL = process.env.SCRIPT_MODEL ?? "google/gemini-2.0-flash-001";
 
 export async function POST(req: NextRequest) {
   const { userId } = await auth();
@@ -80,14 +83,14 @@ export async function POST(req: NextRequest) {
   });
 
   const startTime = Date.now();
-  const message = await anthropic.messages.create({
-    model: process.env.ANTHROPIC_MODEL ?? "claude-sonnet-4-20250514",
+  const message = await openai.chat.completions.create({
+    model: MODEL,
     max_tokens: 4096,
     messages: [{ role: "user", content: prompt }],
   });
 
   const durationMs = Date.now() - startTime;
-  const rawText = message.content[0].type === "text" ? message.content[0].text : "{}";
+  const rawText = message.choices[0].message.content ?? "{}";
 
   let parsed_scripts;
   try {
@@ -97,8 +100,8 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Failed to parse AI output" }, { status: 500 });
   }
 
-  // Persist script + log usage
-  await Promise.all([
+  // Persist script + log usage (fire-and-forget — don't block the response)
+  Promise.all([
     prisma.generatedScript.create({
       data: {
         userId: user.id,
@@ -107,22 +110,22 @@ export async function POST(req: NextRequest) {
         platform,
         lengthSecs,
         niche: user.niche ?? undefined,
-        scriptJson: parsed_scripts,
-        modelUsed: process.env.ANTHROPIC_MODEL ?? "claude-sonnet-4-20250514",
-        tokenCount: (message.usage.input_tokens + message.usage.output_tokens),
+        scriptJson: JSON.stringify(parsed_scripts),
+        modelUsed: MODEL,
+        tokenCount: (message.usage?.prompt_tokens ?? 0) + (message.usage?.completion_tokens ?? 0),
       },
     }),
     prisma.aiUsageLog.create({
       data: {
         userId: user.id,
-        model: process.env.ANTHROPIC_MODEL ?? "claude-sonnet-4-20250514",
+        model: MODEL,
         operation: "script_generation",
-        inputTokens: message.usage.input_tokens,
-        outputTokens: message.usage.output_tokens,
+        inputTokens: message.usage?.prompt_tokens ?? 0,
+        outputTokens: message.usage?.completion_tokens ?? 0,
         durationMs,
       },
     }),
-  ]);
+  ]).catch((e) => console.error("[scripts/generate] persist failed:", e));
 
   return NextResponse.json({ scripts: parsed_scripts.scripts ?? [] });
 }
