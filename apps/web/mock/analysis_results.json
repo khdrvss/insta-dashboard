@@ -1,4 +1,6 @@
 {
+  "mock": true,
+  "total_posts_analyzed": 54,
   "competitors": [
     {
       "handle": "stroycity_tashkent",
@@ -6,10 +8,14 @@
       "followers_est": 28400,
       "posts_analyzed": 12,
       "avg_engagement_rate": 7.2,
+      "avg_likes": 1420,
+      "avg_comments": 98,
+      "avg_views_est": 31200,
       "top_format": "before-after",
       "top_hook_type": "promise",
-      "avg_views_est": 31200,
-      "posting_freq_per_wk": 5.1
+      "posting_freq_per_wk": 5.1,
+      "hook_examples": ["21 kun — va kvartira o'zgardi!", "Bepul maslahat olish uchun DM yuboring"],
+      "top_hashtags": ["remont", "tamir", "stroycity", "toshkent"]
     },
     {
       "handle": "remont_pro_uz",
@@ -17,10 +23,14 @@
       "followers_est": 41200,
       "posts_analyzed": 15,
       "avg_engagement_rate": 8.9,
+      "avg_likes": 2100,
+      "avg_comments": 187,
+      "avg_views_est": 58700,
       "top_format": "tutorial",
       "top_hook_type": "shock",
-      "avg_views_est": 58700,
-      "posting_freq_per_wk": 6.3
+      "posting_freq_per_wk": 6.3,
+      "hook_examples": ["Pudratchingiz yo'qolib ketdimi?", "3 xato millionlaringizga tushadi"],
+      "top_hashtags": ["remontpro", "remont", "interior", "dizayn"]
     },
     {
       "handle": "architecture_uz",
@@ -28,10 +38,14 @@
       "followers_est": 67800,
       "posts_analyzed": 10,
       "avg_engagement_rate": 4.1,
+      "avg_likes": 890,
+      "avg_comments": 43,
+      "avg_views_est": 44100,
       "top_format": "showcase",
       "top_hook_type": "story",
-      "avg_views_est": 44100,
-      "posting_freq_per_wk": 3.2
+      "posting_freq_per_wk": 3.2,
+      "hook_examples": ["Bu loyiha bizni hayratda qoldirdi", "Toshkentdagi eng chiroyli kvartira"],
+      "top_hashtags": ["arxitektura", "dizayn", "architecture", "interior"]
     },
     {
       "handle": "interior_tashkent",
@@ -39,10 +53,14 @@
       "followers_est": 19600,
       "posts_analyzed": 9,
       "avg_engagement_rate": 6.4,
+      "avg_likes": 760,
+      "avg_comments": 72,
+      "avg_views_est": 19800,
       "top_format": "before-after",
       "top_hook_type": "question",
-      "avg_views_est": 19800,
-      "posting_freq_per_wk": 4.5
+      "posting_freq_per_wk": 4.5,
+      "hook_examples": ["Oshxonangizni o'zgartirmoqchimisiz?", "Bu kichkina xona hammani hayratda qoldirdi"],
+      "top_hashtags": ["interior", "interer", "dizayn", "oshxona"]
     },
     {
       "handle": "buildmaster_uz",
@@ -50,18 +68,22 @@
       "followers_est": 12300,
       "posts_analyzed": 8,
       "avg_engagement_rate": 5.8,
+      "avg_likes": 540,
+      "avg_comments": 48,
+      "avg_views_est": 11400,
       "top_format": "day-in-life",
       "top_hook_type": "story",
-      "avg_views_est": 11400,
-      "posting_freq_per_wk": 4.1
+      "posting_freq_per_wk": 4.1,
+      "hook_examples": ["Qurilishda bir kun — ertadan kechgacha", "Buyurtmachimiz uyiga kirgan kuni"],
+      "top_hashtags": ["qurilish", "buildmaster", "remont", "kvartira"]
     }
   ],
   "top_posts": [
     {
       "id": "tp_001",
       "competitor_handle": "remont_pro_uz",
-      "caption": "3 ошибки которые стоят вам миллионы при выборе подрядчика...",
-      "hook_text": "Три ошибки которые я вижу каждый раз",
+      "caption": "Pudratchini tanlashda 3 xato...",
+      "hook_text": "Har safar ko'radigan 3 ta xato",
       "hook_type": "shock",
       "engagement_score": 92.4,
       "likes_est": 2341,
@@ -74,8 +96,8 @@
     {
       "id": "tp_002",
       "competitor_handle": "stroycity_tashkent",
-      "caption": "21 день — и квартира преображена! До и после...",
-      "hook_text": "21 день — и квартира преображена",
+      "caption": "21 kun — va kvartira o'zgardi! Oldin va keyin...",
+      "hook_text": "21 kun — va kvartira o'zgardi",
       "hook_type": "promise",
       "engagement_score": 89.1,
       "likes_est": 1843,
@@ -88,8 +110,8 @@
     {
       "id": "tp_003",
       "competitor_handle": "remont_pro_uz",
-      "caption": "POV: подрядчик исчез на третий день...",
-      "hook_text": "POV: подрядчик исчез на третий день",
+      "caption": "POV: pudratchi 3-kuni yo'qoldi...",
+      "hook_text": "POV: pudratchi 3-kuni yo'qoldi",
       "hook_type": "story",
       "engagement_score": 84.7,
       "likes_est": 1621,
@@ -102,8 +124,8 @@
     {
       "id": "tp_004",
       "competitor_handle": "stroycity_tashkent",
-      "caption": "Сколько стоит реальный ремонт квартиры в Ташкенте?",
-      "hook_text": "Знаете сколько стоит реальная смета?",
+      "caption": "Toshkentda kvartira ta'miri qancha turadi?",
+      "hook_text": "Haqiqiy smeta qancha ekanini bilasizmi?",
       "hook_type": "question",
       "engagement_score": 81.2,
       "likes_est": 1287,
@@ -116,8 +138,8 @@
     {
       "id": "tp_005",
       "competitor_handle": "interior_tashkent",
-      "caption": "Эта маленькая кухня стала нашим любимым проектом...",
-      "hook_text": "Эта кухня изменила всё что мы знали о пространстве",
+      "caption": "Bu kichkina oshxona bizning sevimli loyihamizga aylandi...",
+      "hook_text": "Bu oshxona makon haqidagi bilimlarimizni o'zgartirdi",
       "hook_type": "story",
       "engagement_score": 78.3,
       "likes_est": 986,
@@ -130,8 +152,8 @@
     {
       "id": "tp_006",
       "competitor_handle": "buildmaster_uz",
-      "caption": "День на стройке — с 7 утра до 18:00...",
-      "hook_text": "День на стройке",
+      "caption": "Qurilishda bir kun — ertalab 7dan 18:00gacha...",
+      "hook_text": "Qurilishda bir kun",
       "hook_type": "story",
       "engagement_score": 74.1,
       "likes_est": 743,
@@ -143,39 +165,100 @@
     }
   ],
   "engagement_trend": [
-    { "week": "Apr 7", "avg_engagement": 5.2, "top_competitor": 7.1 },
-    { "week": "Apr 14", "avg_engagement": 6.1, "top_competitor": 8.3 },
-    { "week": "Apr 21", "avg_engagement": 5.8, "top_competitor": 7.8 },
-    { "week": "Apr 28", "avg_engagement": 7.3, "top_competitor": 9.1 },
-    { "week": "May 5", "avg_engagement": 6.9, "top_competitor": 8.6 },
-    { "week": "May 12", "avg_engagement": 7.8, "top_competitor": 9.4 }
+    { "week": "Apr 7",  "avg_engagement": 5.2, "avg_er": 5.2, "top_competitor": 7.1 },
+    { "week": "Apr 14", "avg_engagement": 6.1, "avg_er": 6.1, "top_competitor": 8.3 },
+    { "week": "Apr 21", "avg_engagement": 5.8, "avg_er": 5.8, "top_competitor": 7.8 },
+    { "week": "Apr 28", "avg_engagement": 7.3, "avg_er": 7.3, "top_competitor": 9.1 },
+    { "week": "May 5",  "avg_engagement": 6.9, "avg_er": 6.9, "top_competitor": 8.6 },
+    { "week": "May 12", "avg_engagement": 7.8, "avg_er": 7.8, "top_competitor": 9.4 }
   ],
   "content_format_breakdown": [
-    { "name": "Reels / Video", "value": 52, "color": "#7C3AED" },
-    { "name": "Photos", "value": 28, "color": "#EC4899" },
-    { "name": "Carousels", "value": 20, "color": "#F97316" }
+    { "name": "Reels / Video", "name_uz": "Reels / Video", "value": 52, "count": 28, "pct": 52, "color": "#7C3AED" },
+    { "name": "Photos",        "name_uz": "Rasmlar",       "value": 28, "count": 15, "pct": 28, "color": "#EC4899" },
+    { "name": "Carousels",     "name_uz": "Karusel",       "value": 20, "count": 11, "pct": 20, "color": "#F97316" }
+  ],
+  "hashtag_cloud": [
+    { "tag": "remont",      "count": 34 },
+    { "tag": "tamir",       "count": 28 },
+    { "tag": "dizayn",      "count": 24 },
+    { "tag": "interior",    "count": 21 },
+    { "tag": "toshkent",    "count": 19 },
+    { "tag": "kvartira",    "count": 17 },
+    { "tag": "qurilish",    "count": 15 },
+    { "tag": "before_after","count": 13 },
+    { "tag": "interer",     "count": 11 },
+    { "tag": "premium",     "count": 9  },
+    { "tag": "arxitektura", "count": 8  },
+    { "tag": "oshxona",     "count": 7  }
+  ],
+  "hook_breakdown": [
+    { "type": "question", "type_uz": "Savol",       "count": 18, "pct": 33 },
+    { "type": "shock",    "type_uz": "Shok",        "count": 14, "pct": 26 },
+    { "type": "story",    "type_uz": "Hikoya",      "count": 12, "pct": 22 },
+    { "type": "promise",  "type_uz": "Va'da",       "count": 7,  "pct": 13 },
+    { "type": "stat",     "type_uz": "Statistika",  "count": 3,  "pct": 6  }
+  ],
+  "sentiment_breakdown": [
+    { "name": "positive", "name_uz": "Ijobiy",     "count": 36, "pct": 67 },
+    { "name": "neutral",  "name_uz": "Neytral",    "count": 13, "pct": 24 },
+    { "name": "urgent",   "name_uz": "Shoshilinch","count": 5,  "pct": 9  }
+  ],
+  "pacing_breakdown": [
+    { "name": "fast",   "name_uz": "Tez sur'at", "count": 22, "pct": 41 },
+    { "name": "medium", "name_uz": "O'rtacha",   "count": 18, "pct": 33 },
+    { "name": "slow",   "name_uz": "Sekin",       "count": 14, "pct": 26 }
+  ],
+  "top_ctas": [
+    { "text": "DM yuboring",        "count": 28 },
+    { "text": "Bog'laning",          "count": 21 },
+    { "text": "Bepul maslahat",      "count": 17 },
+    { "text": "Saqlang",             "count": 14 },
+    { "text": "Obuna bo'ling",       "count": 11 }
+  ],
+  "power_words": [
+    { "word": "bepul",    "count": 24 },
+    { "word": "premium",  "count": 21 },
+    { "word": "arzon",    "count": 18 },
+    { "word": "kafolat",  "count": 16 },
+    { "word": "tez",      "count": 14 },
+    { "word": "sifatli",  "count": 13 },
+    { "word": "haqiqiy",  "count": 11 },
+    { "word": "yangi",    "count": 9  }
   ],
   "niche_summary": {
-    "winning_patterns": [
-      { "pattern": "Transparency hook — reveal hidden costs or industry secrets", "frequency": 68, "why_it_works": "Immediately positions brand as trustworthy vs. shady industry norm" },
-      { "pattern": "Before & after transformation (21–30 day timeframe)", "frequency": 54, "why_it_works": "Visual proof + specific timeline creates believability and urgency" },
-      { "pattern": "Educational list (3–5 contractor mistakes to avoid)", "frequency": 47, "why_it_works": "High save rate signals content value to algorithm, builds expert positioning" },
-      { "pattern": "Day in the life / process transparency", "frequency": 41, "why_it_works": "Humanizes brand, builds trust through operational credibility" },
-      { "pattern": "Client rescue story (POV format)", "frequency": 35, "why_it_works": "Story arc triggers emotion, creates contrast, strong narrative in 30s" }
-    ],
-    "best_hook_styles": [
-      { "type": "question", "example": "Знаете сколько стоит реальный ремонт в Ташкенте?", "effectiveness_score": 92 },
-      { "type": "shock", "example": "Три ошибки которые стоят вам миллионы", "effectiveness_score": 87 },
-      { "type": "story", "example": "POV: подрядчик исчез на третий день", "effectiveness_score": 83 },
-      { "type": "promise", "example": "21 день — и квартира преображена", "effectiveness_score": 79 }
+    "top_hook_styles": [
+      { "type": "question", "score": 92, "example": "Toshkentda kvartira ta'miri qancha turadi?" },
+      { "type": "shock",    "score": 87, "example": "Millionlaringizni ketkazadigan 3 xato" },
+      { "type": "story",    "score": 83, "example": "POV: pudratchi 3-kuni yo'qoldi" },
+      { "type": "promise",  "score": 79, "example": "21 kun — va kvartira o'zgardi" }
     ],
     "top_content_formats": [
-      { "format": "before-after", "avg_engagement_lift": 34, "description": "Visual transformation with specific timeframe" },
-      { "format": "tutorial / mistake list", "avg_engagement_lift": 28, "description": "3–5 actionable tips, high save rate" },
-      { "format": "price transparency", "avg_engagement_lift": 22, "description": "Real cost breakdowns build instant trust" }
+      { "format": "before_after", "avg_engagement_lift": 34, "description": "Vizual o'zgarish — aniq muddat bilan" },
+      { "format": "tutorial", "avg_engagement_lift": 28, "description": "3–5 ta amaliy maslahat, saqlash ko'rsatkichi yuqori" },
+      { "format": "price_breakdown", "avg_engagement_lift": 22, "description": "Haqiqiy narx tahlili — darhol ishonch yaratadi" }
     ],
-    "power_phrases": ["До и после", "За 21 день", "Без скрытых наценок", "Реальные цифры", "Ошибки которые", "Сохраните этот", "POV:", "Бесплатная консультация"],
-    "best_posting_patterns": { "times": ["09:00", "12:00", "19:00"], "days": ["Monday", "Wednesday", "Friday", "Saturday"], "frequency": "5–7x per week" },
-    "summary": "Construction and renovation accounts in Tashkent perform best with transparency-led content — price breakdowns, day-in-life, and educational checklists dominate. Hooks that reveal hidden costs or industry secrets generate 2–3× average engagement. Posting frequency of 5–7×/week with Reels as primary format is the clear winning pattern."
+    "power_phrases": ["Oldin va keyin", "21 kunda", "Yashirin narxlarsiz", "Haqiqiy raqamlar", "Bepul maslahat", "Saqlang"],
+    "best_posting_times": [
+      { "time": "09:00–11:00", "days": "Dushanba, Chorshanba" },
+      { "time": "12:00–13:00", "days": "Seshanba, Payshanba" },
+      { "time": "19:00–21:00", "days": "Juma, Shanba" }
+    ],
+    "winning_patterns": [
+      { "pattern": "Shaffof hook — yashirin xarajatlar yoki sanoat sirlarini oshkor qilish", "frequency": 68, "why_it_works": "Brendni ishonchli sifatida joylashtiradi" },
+      { "pattern": "Oldin va keyin o'zgarish (21–30 kunlik muddat)", "frequency": 54, "why_it_works": "Vizual dalil + aniq muddatlar ishonch yaratadi" },
+      { "pattern": "O'quv ro'yxat (3–5 pudratchi xatosi)", "frequency": 47, "why_it_works": "Yuqori saqlash ko'rsatkichi algoritmga signal beradi" }
+    ],
+    "best_hook_styles": [
+      { "type": "question", "example": "Toshkentda kvartira ta'miri qancha turadi?", "effectiveness_score": 92 },
+      { "type": "shock",    "example": "Millionlaringizni ketkazadigan 3 xato",       "effectiveness_score": 87 },
+      { "type": "story",    "example": "POV: pudratchi 3-kuni yo'qoldi",               "effectiveness_score": 83 },
+      { "type": "promise",  "example": "21 kun — va kvartira o'zgardi",                "effectiveness_score": 79 }
+    ],
+    "best_posting_patterns": {
+      "times": ["09:00", "12:00", "19:00"],
+      "days": ["Dushanba", "Chorshanba", "Juma", "Shanba"],
+      "frequency": "Haftada 5–7 marta"
+    },
+    "summary": "Toshkentdagi qurilish va ta'mirlash akkauntlari shaffof kontent bilan eng yaxshi ishlaydi — narx tahlili, kundalik hayot va o'quv chek-listlari ustuvorlik qiladi."
   }
 }
