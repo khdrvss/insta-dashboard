@@ -4,114 +4,150 @@
 
 - **Node.js** >= 20
 - **npm** >= 10
-- **Python** >= 3.11 (for FastAPI backend)
-- **Docker** (optional, for Postgres + Redis)
 
-## Quick Start (Mock Mode — No API Keys Required)
+> No Python. No Docker. No Redis. No Clerk. The entire app runs as a single Next.js process.
+
+---
+
+## Quick Start (2 minutes, zero API keys)
 
 ```bash
-# 1. Install dependencies
+# 1. Clone and install
+git clone https://github.com/khdrvss/insta-dashboard.git
+cd insta-dashboard
 npm install
 
-# 2. Copy env file
+# 2. Copy env template
 cp .env.example .env.local
 
-# 3. (Optional) Set up Python backend for AI features
-cd apps/api
-pip install -r requirements.txt
-cd ../..
+# 3. Run database migrations
+npm run db:push
 
-# 4. Start development
+# 4. Start dev server
 npm run dev
 ```
 
-The app starts in **mock mode** by default (`USE_MOCK_DATA=true`). All external services (Claude, Whisper, Apify, Stripe, etc.) are bypassed. Visit `http://localhost:3000`.
+Open `http://localhost:3000`. Log in with the passphrase **`19801980`**.
+
+Everything works with `USE_MOCK_DATA=true` — no API keys required.
+
+---
 
 ## Environment Variables
 
-### Core Configuration
+### Minimum (mock mode — works immediately)
 
-| Variable              | Default                 | Description                  |
-| --------------------- | ----------------------- | ---------------------------- |
-| `USE_MOCK_DATA`       | `true`                  | Bypass all external APIs     |
-| `NEXT_PUBLIC_APP_URL` | `http://localhost:3000` | App base URL                 |
-| `API_BASE_URL`        | `http://localhost:8000` | FastAPI URL                  |
-| `INTERNAL_API_SECRET` | `dev-internal-secret`   | Web-to-API auth              |
-| `DATABASE_URL`        | `file:./dev.db`         | SQLite (dev) or Postgres URL |
-
-### Required for Live Mode
-
-| Service                | Variables Needed                                        | Getting Started                                    |
-| ---------------------- | ------------------------------------------------------- | -------------------------------------------------- |
-| **Auth**               | `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`, `CLERK_SECRET_KEY` | [Clerk Dashboard](https://dashboard.clerk.com)     |
-| **AI Analysis**        | `ANTHROPIC_API_KEY`                                     | [Anthropic Console](https://console.anthropic.com) |
-| **Transcription**      | `OPENAI_API_KEY`                                        | [OpenAI Platform](https://platform.openai.com)     |
-| **Instagram Scraping** | `APIFY_API_TOKEN`                                       | [Apify Console](https://console.apify.com)         |
-| **Meta OAuth**         | `META_APP_ID`, `META_APP_SECRET`                        | [Meta Developers](https://developers.facebook.com) |
-| **Vector Search**      | `PINECONE_API_KEY`, `PINECONE_INDEX_NAME`               | [Pinecone Console](https://www.pinecone.io)        |
-| **Payments**           | `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`            | [Stripe Dashboard](https://dashboard.stripe.com)   |
-| **Caching**            | `REDIS_URL` or `UPSTASH_REDIS_REST_URL`                 | [Upstash](https://upstash.com) or local Docker     |
-| **Error Tracking**     | `NEXT_PUBLIC_SENTRY_DSN`                                | [Sentry](https://sentry.io)                        |
-
-See [`ENV_KEYS_NEEDED.txt`](../ENV_KEYS_NEEDED.txt) for detailed step-by-step instructions on obtaining each key.
-
-## Docker Setup (Postgres + Redis + API)
-
-```bash
-docker-compose up -d
+```env
+USE_MOCK_DATA=true
+DATABASE_URL="file:../../../packages/db/dev.db"
+PASSPHRASE=19801980
+NEXT_PUBLIC_APP_URL=http://localhost:3000
 ```
 
-This starts:
+### To enable live competitor discovery (Apify)
 
-- **Postgres 16** on port 5432 (`postgres/postgres`, database `instagram_dashboard`)
-- **Redis 7** on port 6379 (password: `redis_password`)
-- **FastAPI** on port 8000 (hot-reload enabled)
-
-## Installing Dependencies
-
-### All at once
-
-```bash
-npm install                          # Root + workspaces
-cd apps/api && pip install -r requirements.txt
+```env
+USE_MOCK_DATA=false
+APIFY_API_TOKEN=apify_api_...
 ```
 
-### Individual workspaces
+### To enable live AI (script generation + competitor filtering)
 
-```bash
-npm install --workspace=@instagram-dashboard/web
-npm install --workspace=@instagram-dashboard/ai
-npm install --workspace=@instagram-dashboard/db
+```env
+OPENROUTER_API_KEY=sk-or-v1-...
+OPENROUTER_MODEL=google/gemini-2.0-flash-001   # cheap, great Uzbek output
+# or: google/gemini-2.5-flash  (better reasoning, costs more)
 ```
+
+### To enable Instagram OAuth (connect your own account)
+
+```env
+META_APP_ID=your-meta-app-id
+META_APP_SECRET=your-meta-app-secret
+META_OAUTH_REDIRECT_URI=http://localhost:3000/api/auth/instagram/callback
+```
+
+### To enable payments (Stripe)
+
+```env
+STRIPE_SECRET_KEY=sk_test_...
+STRIPE_WEBHOOK_SECRET=whsec_...
+STRIPE_PRO_MONTHLY_PRICE_ID=price_...
+STRIPE_PRO_ANNUAL_PRICE_ID=price_...
+```
+
+### Full variable reference
+
+| Variable                    | Required for         | Description                                       |
+| --------------------------- | -------------------- | ------------------------------------------------- |
+| `USE_MOCK_DATA`             | Always               | `"true"` = no external calls, fixture data only   |
+| `DATABASE_URL`              | Always               | SQLite file path (dev) or PostgreSQL URL (prod)   |
+| `PASSPHRASE`                | Always               | Dev login passphrase (default `19801980`)         |
+| `NEXT_PUBLIC_APP_URL`       | Always               | App origin, used in OAuth redirects               |
+| `OPENROUTER_API_KEY`        | AI features          | All AI calls route through OpenRouter             |
+| `OPENROUTER_MODEL`          | AI features          | Default `google/gemini-2.0-flash-001`             |
+| `APIFY_API_TOKEN`           | Competitor discovery | Instagram hashtag + profile scraping              |
+| `APIFY_INSTAGRAM_ACTOR_ID`  | Content analysis     | Default `apify/instagram-scraper`                 |
+| `META_APP_ID`               | Instagram OAuth      | Meta Developer App ID                             |
+| `META_APP_SECRET`           | Instagram OAuth      | Meta Developer App Secret                         |
+| `META_OAUTH_REDIRECT_URI`   | Instagram OAuth      | Must match Meta App Dashboard setting             |
+| `STRIPE_SECRET_KEY`         | Payments             | Stripe secret key                                 |
+| `STRIPE_WEBHOOK_SECRET`     | Payments             | Stripe webhook signing secret                     |
+| `STRIPE_PRO_MONTHLY_PRICE_ID` | Payments           | Stripe price ID for monthly plan                  |
+| `STRIPE_PRO_ANNUAL_PRICE_ID`  | Payments           | Stripe price ID for annual plan                   |
+
+---
 
 ## Database Setup
 
-### Dev (SQLite — zero config)
-
-The SQLite database at `packages/db/dev.db` works immediately. Schema is auto-applied on first use.
+### Dev — SQLite (default, zero config)
 
 ```bash
-npm run db:push     # Push schema to DB
-npm run db:studio   # Open Prisma Studio GUI
+npm run db:push      # Apply schema to dev.db
+npm run db:studio    # Open Prisma Studio GUI at localhost:5555
 ```
 
-### Production (Postgres)
+The database file lives at `packages/db/dev.db`. It's gitignored.
+
+### Seeding test data (optional)
 
 ```bash
-npm run db:migrate  # Create + apply migrations
-npm run db:generate # Regenerate Prisma client
+npx ts-node scripts/seed.ts
 ```
+
+### Production — PostgreSQL / Supabase
+
+Change `DATABASE_URL` to your Postgres connection string, then:
+
+```bash
+npm run db:migrate   # Create and apply migrations
+npm run db:generate  # Regenerate Prisma client
+```
+
+---
 
 ## Available Scripts
 
-| Command                                                | Description                             |
-| ------------------------------------------------------ | --------------------------------------- |
-| `npm run dev`                                          | Start all services (Turborepo parallel) |
-| `npm run build`                                        | Build all packages                      |
-| `npm run lint`                                         | Lint all packages                       |
-| `npm run type-check`                                   | TypeScript check all packages           |
-| `npm run db:generate`                                  | Generate Prisma client                  |
-| `npm run db:push`                                      | Push schema to DB (dev)                 |
-| `npm run db:migrate`                                   | Create and apply migration              |
-| `npm run db:studio`                                    | Open Prisma Studio                      |
-| `cd apps/api && uvicorn main:app --reload --port 8000` | Start FastAPI dev server                |
+| Command                   | Description                              |
+| ------------------------- | ---------------------------------------- |
+| `npm run dev`             | Start dev server (Next.js, port 3000)    |
+| `npm run build`           | Production build                         |
+| `npm run lint`            | ESLint all packages                      |
+| `npm run type-check`      | TypeScript strict check                  |
+| `npm run db:push`         | Push schema to DB (dev — no migration)   |
+| `npm run db:migrate`      | Create migration + apply (production)    |
+| `npm run db:generate`     | Regenerate Prisma client                 |
+| `npm run db:studio`       | Open Prisma Studio GUI                   |
+
+---
+
+## Where to Get API Keys
+
+| Service    | URL                                          | Notes                                      |
+| ---------- | -------------------------------------------- | ------------------------------------------ |
+| OpenRouter | https://openrouter.ai/keys                   | One key covers all models (Gemini, Claude) |
+| Apify      | https://console.apify.com/account/integrations | Free tier: 5 USD credit/month            |
+| Meta       | https://developers.facebook.com/apps/        | Create Business app → add Instagram Basic  |
+| Stripe     | https://dashboard.stripe.com/test/apikeys    | Use test keys for development              |
+
+See [`ENV_KEYS_NEEDED.txt`](../ENV_KEYS_NEEDED.txt) for detailed step-by-step instructions.

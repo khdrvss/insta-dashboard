@@ -5,212 +5,271 @@
 ### Code Style
 
 - **TypeScript** — Strict mode, all types explicit
-- **Python** — PEP 8 (via Ruff or Black)
-- **No comments** in source code unless explaining non-obvious logic
+- **No comments** in source unless explaining non-obvious logic
 - Follow existing patterns when adding new features
 
 ### File Naming
 
-| Pattern             | Example                       |
-| ------------------- | ----------------------------- |
-| `page.tsx`          | Page components               |
-| `layout.tsx`        | Layout components             |
-| `ComponentName.tsx` | React components (PascalCase) |
-| `route.ts`          | Next.js API route handlers    |
-| `util-name.ts`      | Utility modules (kebab-case)  |
-| `service_name.py`   | Python services (snake_case)  |
+| Pattern             | Example                              |
+| ------------------- | ------------------------------------ |
+| `page.tsx`          | Next.js page components              |
+| `layout.tsx`        | Next.js layout components            |
+| `ComponentName.tsx` | React components (PascalCase)        |
+| `route.ts`          | Next.js API route handlers           |
+| `util-name.ts`      | Utility modules (kebab-case)         |
+| `*.json`            | Mock fixture data (`apps/web/mock/`) |
 
 ### Git Commit Style
 
-- Concise, focused on "why" not "what"
-- Conventional commits preferred: `feat:`, `fix:`, `refactor:`, `docs:`, `chore:`
+Conventional commits: `feat:`, `fix:`, `refactor:`, `docs:`, `chore:`  
+Focus on "why", not "what".
+
+---
+
+## Architecture Principles
+
+> **No separate backend.** All logic — AI calls, scraping, DB queries — runs inside Next.js API routes. One `npm run dev`, one `vercel deploy`.
+
+- **Server components** fetch initial data (no client-side waterfalls for first paint)
+- **Client components** handle interactivity, forms, and context
+- **Mock mode** (`USE_MOCK_DATA=true`) every feature must work with fixture data
+- **SQLite arrays stored as JSON strings** — always `JSON.stringify()` on write, `JSON.parse()` on read
 
 ---
 
 ## Adding a New Feature
 
-### 1. Frontend Page
+### 1. New Dashboard Tab
+
+```bash
+# 1. Create the page
+apps/web/app/dashboard/new-tab/page.tsx
+
+# 2. Add to Sidebar nav
+apps/web/components/dashboard/Sidebar.tsx → NAV_ITEMS
+
+# 3. Add translations (both uz and en)
+apps/web/lib/i18n/translations.ts → nav.newTab, ...
+
+# 4. Create API route (if needed)
+apps/web/app/api/new-tab/route.ts
+```
+
+### 2. Server Component + Client Component Pattern
 
 ```tsx
-// apps/web/app/dashboard/new-feature/page.tsx
-export default async function NewFeaturePage() {
-  const data = await fetch(...)
-  return <NewFeatureClient data={data} />
+// page.tsx — server component: fetches data
+export default async function NewTabPage() {
+  const user = await getCurrentUser();
+  const data = process.env.USE_MOCK_DATA === "true"
+    ? mockData
+    : await prisma.someModel.findMany({ where: { userId: user.id } });
+  return <NewTabClient data={data} />;
+}
+
+// NewTabClient.tsx — client component: interactivity + translations
+"use client";
+export function NewTabClient({ data }) {
+  const { T } = useLang();
+  return <div>{T.newTab.title}</div>;
 }
 ```
 
-### 2. Server Component → Client Component Pattern
-
-```tsx
-// page.tsx (server) fetches data
-// FeatureClient.tsx (client) handles interactivity
-```
-
-### 3. API Route (if needed)
+### 3. New API Route
 
 ```tsx
 // apps/web/app/api/new-feature/route.ts
-export async function POST(req: Request) {
-  const body = await req.json();
-  // validate with Zod, call DB, return Response
+import { getAuth as auth } from "@/lib/mock-auth";
+import { NextRequest, NextResponse } from "next/server";
+import { prisma } from "@instagram-dashboard/db";
+import { z } from "zod";
+
+const schema = z.object({ field: z.string() });
+
+export async function POST(req: NextRequest) {
+  const { userId } = await auth();
+  if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  // Mock mode
+  if (process.env.USE_MOCK_DATA === "true") {
+    return NextResponse.json({ result: "mock" });
+  }
+
+  const body = await req.json().catch(() => null);
+  const parsed = schema.safeParse(body);
+  if (!parsed.success) return NextResponse.json({ error: "Invalid input" }, { status: 422 });
+
+  const user = await prisma.user.findUnique({ where: { clerkId: userId } });
+  // ... logic ...
+  return NextResponse.json({ result: "ok" });
 }
 ```
 
-### 4. FastAPI Route (if heavy processing)
+### 4. New DB Model
 
-```python
-# apps/api/routes/new_feature.py
-@router.post("/new-feature")
-async def new_feature(request: Request):
-    data = await request.json()
-    return {"result": "processed"}
+Add to `packages/db/prisma/schema.prisma`:
+
+```prisma
+model NewModel {
+  id        String   @id @default(cuid())
+  userId    String   @map("user_id")
+  data      String   @default("[]") // JSON array stored as TEXT
+  createdAt DateTime @default(now()) @map("created_at")
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@map("new_models")
+}
 ```
 
-### 5. DB Model (if needed)
-
-Add to `packages/db/prisma/schema.prisma`, then:
-
+Then:
 ```bash
-npm run db:push     # dev
-npm run db:generate # regenerate Prisma client
+npm run db:push      # dev (no migration file)
+npm run db:generate  # regenerate Prisma client
 ```
 
-### 6. Translations (if UI copy)
+### 5. New Translations
 
-Add keys to both language objects in `apps/web/lib/i18n/translations.ts`.
+```ts
+// lib/i18n/translations.ts — add to both uz and en objects
+uz: {
+  newTab: {
+    title: "Yangi sahifa",
+    emptyState: "Ma'lumot yo'q",
+  }
+},
+en: {
+  newTab: {
+    title: "New Tab",
+    emptyState: "No data yet",
+  }
+}
+```
+
+Usage in component:
+```tsx
+const { T } = useLang();
+<h1>{T.newTab.title}</h1>
+```
 
 ---
 
 ## Mock Data Strategy
 
-Every feature should work in mock mode (`USE_MOCK_DATA=true`) without external dependencies.
+Every feature **must work in mock mode** without any API keys.
 
-- **Frontend mock data:** `apps/web/mock/*.json`
-- **API mock data:** `apps/api/mock/*.json`
-- **Pattern:** Check `USE_MOCK_DATA` env var → return fixture → skip external call
+**Pattern:**
+```ts
+if (process.env.USE_MOCK_DATA === "true") {
+  await new Promise(r => setTimeout(r, 1000)); // simulate latency
+  return NextResponse.json(mockFixture);
+}
+```
 
-See [Mock Data Strategy](mock-data.md) for full details.
+**Mock files live in** `apps/web/mock/*.json`  
+**Keep mock data realistic** — same shape as live API responses, Uzbek-language content.
 
 ---
 
 ## UI Component Conventions
 
-- Use `shadcn/ui` components from `components/ui/` (generated via `components.json`)
-- Component variants via `class-variance-authority`
-- Class merging via `cn()` utility (`tailwind-merge` + `clsx`)
-- Dark theme by default
-- Each component handles: loading, empty, error, and success states
-
-### Example Component Structure
+- Dark theme always — `bg-[#0d1117]` base, `bg-white/5` cards
+- Each component handles: loading skeleton, empty state, error state, success state
+- Use `animate-pulse` for loading skeletons, `animate-fade-in` for page entry
 
 ```tsx
-interface Props {
-  data?: SomeType;
-  isLoading?: boolean;
-  error?: string;
-}
-
-export function MyComponent({ data, isLoading, error }: Props) {
-  if (isLoading) return <Skeleton />;
-  if (error) return <ErrorState message={error} />;
-  if (!data) return <EmptyState />;
-  return <div>{/* actual content */}</div>;
+export function MyComponent({ data, isLoading, error }) {
+  if (isLoading) return <div className="h-32 bg-white/5 rounded-2xl animate-pulse" />;
+  if (error) return <p className="text-red-400 text-sm">{error}</p>;
+  if (!data?.length) return <EmptyState />;
+  return <div className="space-y-4">{/* content */}</div>;
 }
 ```
 
 ---
 
-## Service Layer Conventions
+## Next.js API Route Conventions
 
-### Python Services
-
-- All external API calls use `@retry` decorator (3 attempts, exponential backoff)
-- Mock fallback: check `os.getenv("USE_MOCK_DATA") == "true"` → return fixtures
-- Graceful degradation: AI, vector DB, and cache services silently fall back when dependencies are unavailable
-
-### Next.js API Routes
-
-- Zod validation for all POST/PUT request bodies
-- Error responses: `{ "error": "human-readable message" }` with appropriate HTTP status
-- Mock fallback: check `isMockMode()` → return fixture data with simulated delay
-
----
-
-## Testing
-
-### Frontend Testing
-
-- No testing framework currently configured
-- Manual testing: `npm run dev` with mock data
-
-### Backend Testing
-
-- No testing framework currently configured
-- Manual testing: run FastAPI with `uvicorn main:app --reload`, test via curl/Postman
-
-### Linting & Type Checking
-
-```bash
-npm run lint          # ESLint (Next.js) + Ruff/FastAPI linting
-npm run type-check    # TypeScript strict mode
-```
-
----
-
-## Adding Dependencies
-
-### npm packages
-
-```bash
-npm install <package> --workspace=<workspace>
-# or add to specific workspace's package.json manually
-```
-
-### Python packages
-
-```bash
-cd apps/api
-pip install <package>
-pip freeze > requirements.txt
-```
+- **Zod** validation for all POST/PUT request bodies
+- **Auth check first** — always check `userId` before any DB query
+- **Error responses** — `{ error: "human-readable message" }` with HTTP status
+- **Mock branch at top** — check `USE_MOCK_DATA` before any external calls
+- **Try/catch** around external calls (Apify, OpenRouter) with graceful degradation
 
 ---
 
 ## Common Tasks
 
-### Add a new dashboard tab
-
-1. Create page at `apps/web/app/dashboard/new-tab/page.tsx`
-2. Add link in `Sidebar.tsx`
-3. Add translations in `translations.ts`
-4. Add route handler if needed
-
 ### Add a new AI prompt
 
-1. Create file in `packages/ai/prompts/new-feature.ts`
-2. Export the prompt function
-3. Add corresponding Python handler in `apps/api/services/ai.py` or Next.js route
+```ts
+// packages/ai/prompts/new-prompt.ts
+export function buildNewPrompt({ niche, ...params }: Params): string {
+  return `You are an expert...
+  
+  Niche: ${niche}
+  
+  Return valid JSON: { ... }`;
+}
+```
 
-### Add a new external API integration
+Import in the API route:
+```ts
+import { buildNewPrompt } from "@instagram-dashboard/ai";
+```
 
-1. Add env variables to `.env.example` and `ENV_KEYS_NEEDED.txt`
-2. Create service file in `apps/api/services/`
-3. Add retry logic and graceful degradation
-4. Add mock fixture data fallback
-5. Register in `main.py` router (if new route file)
+### Add a new Apify scrape
+
+```ts
+const { ApifyClient } = await import("apify-client");
+const apify = new ApifyClient({ token: process.env.APIFY_API_TOKEN });
+
+const run = await apify.actor("apify/instagram-scraper").call({
+  usernames: [handle],
+  resultsLimit: 50,
+});
+const { items } = await apify.dataset(run.defaultDatasetId).listItems();
+```
+
+### Debug mock vs live
+
+```bash
+# Switch to live mode temporarily
+USE_MOCK_DATA=false npm run dev
+
+# Or add ?debug=1 and log in the route handler
+console.log("[route] user:", userId, "mock:", process.env.USE_MOCK_DATA);
+```
+
+---
+
+## Linting & Type Checking
+
+```bash
+npm run lint         # ESLint
+npm run type-check   # TypeScript strict mode check
+```
+
+TypeScript errors must be fixed before pushing — CI will block on them.
 
 ---
 
 ## Architecture Decision Records
 
-### Why Two Backends?
+### Why no separate Python backend?
 
-Next.js API routes on Vercel have a 10s timeout — too short for AI analysis. FastAPI on Render handles long-running tasks (transcription, AI analysis, scraping).
+Next.js API routes on Vercel handle all AI + scraping. The 10s timeout is sufficient for current operations (synchronous scrape + analyze). Removing the FastAPI layer eliminates one entire deployment, one set of env vars, and all cross-service auth complexity.
 
-### Why No State Management Library?
+### Why OpenRouter instead of direct Anthropic/OpenAI?
 
-The app has minimal client-side state. Most data is fetched server-side or via simple `useEffect` fetches. If complexity grows, consider Zustand or TanStack Query.
+One API key covers all models. Easy to switch from Gemini 2.0 Flash to Claude Sonnet without code changes — just update `OPENROUTER_MODEL`. Gemini 2.0-flash-001 produces excellent Uzbek (Latin script) output at lower cost than Claude.
 
-### Why SQLite in Dev?
+### Why SQLite in dev?
 
-Zero-config local development. Prisma makes switching to PostgreSQL trivial — just change `DATABASE_URL`.
+Zero config — `npm install` and go. Prisma makes switching to PostgreSQL trivial (`DATABASE_URL` only). Arrays stored as JSON strings is the only real difference.
+
+### Why passphrase auth in dev?
+
+No Clerk account, no OAuth app, no redirect URI setup needed. One env var (`PASSPHRASE`) and one httpOnly cookie. Production-ready Clerk swap is supported via real `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`.
+
+### Why ScriptsContext at layout level?
+
+Script generation takes 5–15 seconds. Without context, navigating away from `/dashboard/scripts` would abort the request and lose results. Context + `keepalive: true` ensures the HTTP request continues and results are available when the user returns.
