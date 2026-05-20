@@ -109,8 +109,12 @@ function CompetitorCard({ c }: { c: any }) {
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
-            <span className="font-semibold text-white text-sm">{c.display_name || `@${c.handle}`}</span>
-            <span className="text-white/30 text-xs">@{c.handle}</span>
+            <span className="font-bold text-white" style={{ fontSize: 17, letterSpacing: "-0.025em" }}>
+              {c.display_name || `@${c.handle}`}
+            </span>
+            {c.display_name && (
+              <span className="font-medium" style={{ color: "#8a8f98", fontSize: 13 }}>@{c.handle}</span>
+            )}
           </div>
           <div className="flex items-center gap-3 mt-1 flex-wrap text-xs text-white/40">
             {c.followers_est && <span>~{formatNumber(c.followers_est)} obunachilar</span>}
@@ -245,188 +249,130 @@ function TopPostsList({ posts }: { posts: any[] }) {
             key={p.id}
             className="rounded-2xl overflow-hidden transition-all duration-150"
             style={{
-              background: isOpen ? "rgba(255,255,255,0.045)" : "rgba(255,255,255,0.03)",
-              border: `1px solid ${isOpen ? "rgba(255,255,255,0.14)" : "rgba(255,255,255,0.08)"}`,
+              background: isOpen ? "rgba(255,255,255,0.04)" : "rgba(255,255,255,0.025)",
+              border: `1px solid ${isOpen ? "rgba(255,255,255,0.12)" : "rgba(255,255,255,0.07)"}`,
             }}
           >
-            {/* ── Main card ── */}
-            <div className="p-5 sm:p-6 cursor-pointer" onClick={() => setExpanded(isOpen ? null : p.id)}>
-              {/* Top row: thumbnail + rank + text + ER score */}
-              <div className="flex items-start gap-4 mb-4">
+            {/* ── Compact main row ── */}
+            <div className="p-4 cursor-pointer" onClick={() => setExpanded(isOpen ? null : p.id)}>
+              <div className="flex items-center gap-3">
 
-                {/* Thumbnail or rank badge */}
-                <div className="flex-shrink-0 relative" style={{ width: 64, height: 64 }}>
+                {/* Thumbnail */}
+                <div className="flex-shrink-0 relative" style={{ width: 72, height: 72 }}>
                   {p.thumbnail_url ? (
                     <>
-                      <img
-                        src={p.thumbnail_url}
-                        alt=""
-                        className="w-full h-full object-cover rounded-xl"
-                        style={{ border: "1px solid rgba(255,255,255,0.1)" }}
-                      />
-                      {/* Rank badge overlay */}
-                      <div
-                        className="absolute -top-2 -left-2 flex items-center justify-center rounded-lg"
-                        style={{
-                          width: 26, height: 26,
-                          background: rank?.bg ?? "rgba(255,255,255,0.1)",
-                          border: `1px solid ${rank?.border ?? "rgba(255,255,255,0.15)"}`,
-                          boxShadow: "0 2px 8px rgba(0,0,0,0.4)",
-                        }}
-                      >
+                      <img src={p.thumbnail_url} alt="" className="w-full h-full object-cover rounded-xl"
+                        style={{ border: "1px solid rgba(255,255,255,0.1)" }} />
+                      <div className="absolute -top-1.5 -left-1.5 flex items-center justify-center rounded-md"
+                        style={{ width: 22, height: 22, background: rank?.bg ?? "rgba(0,0,0,0.7)", border: `1px solid ${rank?.border ?? "rgba(255,255,255,0.2)"}`, boxShadow: "0 2px 6px rgba(0,0,0,0.5)" }}>
                         {i < 3
-                          ? <span style={{ fontSize: 14, lineHeight: 1 }}>{rank!.emoji}</span>
-                          : <span className="font-bold tabular-nums" style={{ fontSize: 11, color: "#8a8f98" }}>{i + 1}</span>
-                        }
+                          ? <span style={{ fontSize: 12, lineHeight: 1 }}>{rank!.emoji}</span>
+                          : <span className="font-bold" style={{ fontSize: 10, color: "#8a8f98" }}>{i+1}</span>}
                       </div>
-                      {/* Open in Instagram button */}
                       {p.post_url && (
-                        <a
-                          href={p.post_url}
-                          target="_blank"
-                          rel="noopener noreferrer"
+                        <a href={p.post_url} target="_blank" rel="noopener noreferrer"
                           onClick={(e) => e.stopPropagation()}
                           className="absolute inset-0 flex items-center justify-center rounded-xl opacity-0 hover:opacity-100 transition-opacity"
-                          style={{ background: "rgba(0,0,0,0.6)", backdropFilter: "blur(2px)" }}
-                          title="Instagramda ochish"
-                        >
-                          <Instagram size={22} style={{ color: "#fff" }} />
+                          style={{ background: "rgba(0,0,0,0.65)" }}>
+                          <Instagram size={20} style={{ color: "#fff" }} />
                         </a>
                       )}
                     </>
                   ) : (
-                    /* No thumbnail — show rank badge */
-                    <div
-                      className="w-full h-full flex items-center justify-center rounded-xl"
-                      style={{
-                        background: rank?.bg ?? "rgba(255,255,255,0.05)",
-                        border: `1px solid ${rank?.border ?? "rgba(255,255,255,0.1)"}`,
-                      }}
-                    >
-                      {i < 3
-                        ? <span style={{ fontSize: 28, lineHeight: 1 }}>{rank!.emoji}</span>
-                        : <span className="font-bold tabular-nums" style={{ fontSize: 22, color: "#8a8f98" }}>{i + 1}</span>
-                      }
+                    <div className="w-full h-full flex items-center justify-center rounded-xl"
+                      style={{ background: rank?.bg ?? "rgba(255,255,255,0.05)", border: `1px solid ${rank?.border ?? "rgba(255,255,255,0.1)"}` }}>
+                      {i < 3 ? <span style={{ fontSize: 26 }}>{rank!.emoji}</span>
+                        : <span className="font-bold" style={{ fontSize: 18, color: "#8a8f98" }}>{i+1}</span>}
                     </div>
                   )}
                 </div>
 
-                {/* Headline text */}
-                <div className="flex-1 min-w-0 pt-0.5">
+                {/* Middle: headline + handle + tags */}
+                <div className="flex-1 min-w-0">
+                  {/* Headline */}
                   {headline ? (
-                    <p className="font-semibold leading-snug" style={{ color: "#f7f8f8", fontSize: 15, letterSpacing: "-0.02em" }}>
+                    <p className="font-semibold leading-snug line-clamp-2 mb-1.5"
+                      style={{ color: "#f7f8f8", fontSize: 14, letterSpacing: "-0.02em" }}>
                       {headline}
                     </p>
                   ) : (
-                    <p style={{ color: "#62666d", fontSize: 14, fontStyle: "italic" }}>Matn mavjud emas</p>
+                    <p className="mb-1.5" style={{ color: "#62666d", fontSize: 13, fontStyle: "italic" }}>Matn mavjud emas</p>
                   )}
-                  <div className="flex items-center gap-2 mt-1.5">
-                    <p className="font-medium" style={{ color: "#8a8f98", fontSize: 13 }}>
-                      @{p.competitor_handle}
-                    </p>
+                  {/* Handle + link */}
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="font-bold" style={{ color: "#d0d6e0", fontSize: 14 }}>@{p.competitor_handle}</span>
                     {p.post_url && (
-                      <a
-                        href={p.post_url}
-                        target="_blank"
-                        rel="noopener noreferrer"
+                      <a href={p.post_url} target="_blank" rel="noopener noreferrer"
                         onClick={(e) => e.stopPropagation()}
-                        className="flex items-center gap-1 px-2 py-0.5 rounded-md transition-colors hover:opacity-80"
-                        style={{ background: "rgba(165,163,255,0.12)", border: "1px solid rgba(165,163,255,0.2)", color: "#a5a3ff", fontSize: 11, fontWeight: 600 }}
-                      >
-                        <Instagram size={11} />
-                        Ko'rish
+                        className="flex items-center gap-1 px-2 py-0.5 rounded-md hover:opacity-80 transition-opacity"
+                        style={{ background: "rgba(165,163,255,0.12)", border: "1px solid rgba(165,163,255,0.2)", color: "#a5a3ff", fontSize: 11, fontWeight: 600 }}>
+                        <Instagram size={10} /> Ko'rish
                       </a>
+                    )}
+                  </div>
+                  {/* Tags inline */}
+                  <div className="flex flex-wrap gap-1.5">
+                    {p.hook_type && (
+                      <span className={`text-xs px-2 py-0.5 rounded-md border font-medium ${hookColor}`}>
+                        {p.hook_type === "promise" ? "Va'da" : p.hook_type === "question" ? "Savol" : p.hook_type === "shock" ? "Shok" : p.hook_type === "story" ? "Hikoya" : p.hook_type}
+                      </span>
+                    )}
+                    {p.content_format && (
+                      <span className="text-xs px-2 py-0.5 rounded-md border font-medium"
+                        style={{ background: "rgba(255,255,255,0.05)", color: "#8a8f98", borderColor: "rgba(255,255,255,0.1)" }}>
+                        {FORMAT_LABELS_UZ[p.content_format] ?? p.content_format}
+                      </span>
+                    )}
+                    {p.sentiment && (
+                      <span className={`text-xs px-2 py-0.5 rounded-md font-medium ${SENTIMENT_COLORS[p.sentiment] ?? "bg-white/5 text-white/40"}`}>
+                        {p.sentiment === "positive" ? "Ijobiy" : p.sentiment === "urgent" ? "Shoshilinch" : "Neytral"}
+                      </span>
+                    )}
+                    {p.pacing_style && (
+                      <span className="text-xs px-2 py-0.5 rounded-md border"
+                        style={{ background: "rgba(255,255,255,0.04)", color: "#62666d", borderColor: "rgba(255,255,255,0.08)" }}>
+                        {p.pacing_style === "fast" ? "Tez ⚡" : p.pacing_style === "slow" ? "Sekin 🐢" : "O'rta"}
+                      </span>
                     )}
                   </div>
                 </div>
 
-                {/* ER score — big & bold */}
-                <div className="flex-shrink-0 text-right">
-                  <div className="font-bold tabular-nums leading-none" style={{ fontSize: 28, color, letterSpacing: "-0.04em" }}>
-                    {p.engagement_score.toFixed(2)}
+                {/* Right: stats column */}
+                <div className="flex-shrink-0 flex flex-col items-end gap-1.5">
+                  {/* Big ER */}
+                  <div className="text-right mb-1">
+                    <div className="font-bold tabular-nums" style={{ fontSize: 24, color, letterSpacing: "-0.04em", lineHeight: 1 }}>
+                      {p.engagement_score.toFixed(2)}
+                    </div>
+                    <div className="font-semibold" style={{ fontSize: 10, color: "rgba(255,255,255,0.3)", letterSpacing: "0.05em" }}>ER</div>
                   </div>
-                  <div className="font-semibold mt-0.5" style={{ fontSize: 11, color: "rgba(255,255,255,0.35)", letterSpacing: "0.06em" }}>
-                    ER SCORE
+                  {/* Compact stats */}
+                  {p.views_est != null && (
+                    <div className="flex items-center gap-1.5 px-2 py-1 rounded-lg"
+                      style={{ background: "rgba(165,163,255,0.08)", border: "1px solid rgba(165,163,255,0.15)" }}>
+                      <Eye size={11} style={{ color: "#a5a3ff" }} />
+                      <span className="font-bold tabular-nums" style={{ fontSize: 13, color: "#f7f8f8" }}>{formatNumber(p.views_est)}</span>
+                    </div>
+                  )}
+                  {p.likes_est != null && (
+                    <div className="flex items-center gap-1.5 px-2 py-1 rounded-lg"
+                      style={{ background: "rgba(244,114,182,0.08)", border: "1px solid rgba(244,114,182,0.15)" }}>
+                      <Heart size={11} style={{ color: "#f472b6" }} />
+                      <span className="font-bold tabular-nums" style={{ fontSize: 13, color: "#f7f8f8" }}>{formatNumber(p.likes_est)}</span>
+                    </div>
+                  )}
+                  {p.comments_est != null && (
+                    <div className="flex items-center gap-1.5 px-2 py-1 rounded-lg"
+                      style={{ background: "rgba(96,165,250,0.08)", border: "1px solid rgba(96,165,250,0.15)" }}>
+                      <MessageCircle size={11} style={{ color: "#60a5fa" }} />
+                      <span className="font-bold tabular-nums" style={{ fontSize: 13, color: "#f7f8f8" }}>{formatNumber(p.comments_est)}</span>
+                    </div>
+                  )}
+                  {/* Expand chevron */}
+                  <div style={{ color: "#62666d", marginTop: 2 }}>
+                    {isOpen ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
                   </div>
                 </div>
-              </div>
-
-              {/* Tags row */}
-              <div className="flex flex-wrap gap-2 mb-4">
-                {p.hook_type && (
-                  <span className={`text-sm px-3 py-1 rounded-lg border font-medium capitalize ${hookColor}`}>
-                    {p.hook_type === "promise" ? "Va'da" : p.hook_type === "question" ? "Savol" : p.hook_type === "shock" ? "Shok" : p.hook_type === "story" ? "Hikoya" : p.hook_type}
-                  </span>
-                )}
-                {p.content_format && (
-                  <span className="text-sm px-3 py-1 rounded-lg border font-medium"
-                    style={{ background: "rgba(255,255,255,0.05)", color: "#d0d6e0", borderColor: "rgba(255,255,255,0.1)" }}>
-                    {FORMAT_LABELS_UZ[p.content_format] ?? p.content_format}
-                  </span>
-                )}
-                {p.sentiment && (
-                  <span className={`text-sm px-3 py-1 rounded-lg font-medium ${SENTIMENT_COLORS[p.sentiment] ?? "bg-white/5 text-white/40"}`}>
-                    {p.sentiment === "positive" ? "Ijobiy" : p.sentiment === "urgent" ? "Shoshilinch" : "Neytral"}
-                  </span>
-                )}
-                {p.pacing_style && (
-                  <span className="text-sm px-3 py-1 rounded-lg border"
-                    style={{ background: "rgba(255,255,255,0.04)", color: "#8a8f98", borderColor: "rgba(255,255,255,0.08)" }}>
-                    {p.pacing_style === "fast" ? "Tez ⚡" : p.pacing_style === "slow" ? "Sekin 🐢" : "O'rta"}
-                  </span>
-                )}
-              </div>
-
-              {/* Stats row — big numbers */}
-              <div
-                className="grid gap-3"
-                style={{ gridTemplateColumns: "repeat(auto-fit, minmax(90px, 1fr))" }}
-              >
-                {p.likes_est != null && (
-                  <div className="flex flex-col gap-1 rounded-xl p-3"
-                    style={{ background: "rgba(244,114,182,0.08)", border: "1px solid rgba(244,114,182,0.18)" }}>
-                    <Heart size={16} style={{ color: "#f472b6" }} />
-                    <span className="font-bold tabular-nums" style={{ fontSize: 20, color: "#f7f8f8", letterSpacing: "-0.03em" }}>
-                      {formatNumber(p.likes_est)}
-                    </span>
-                    <span style={{ fontSize: 11, color: "#f472b6", fontWeight: 600, letterSpacing: "0.04em" }}>LAYK</span>
-                  </div>
-                )}
-                {p.comments_est != null && (
-                  <div className="flex flex-col gap-1 rounded-xl p-3"
-                    style={{ background: "rgba(96,165,250,0.08)", border: "1px solid rgba(96,165,250,0.18)" }}>
-                    <MessageCircle size={16} style={{ color: "#60a5fa" }} />
-                    <span className="font-bold tabular-nums" style={{ fontSize: 20, color: "#f7f8f8", letterSpacing: "-0.03em" }}>
-                      {formatNumber(p.comments_est)}
-                    </span>
-                    <span style={{ fontSize: 11, color: "#60a5fa", fontWeight: 600, letterSpacing: "0.04em" }}>IZOH</span>
-                  </div>
-                )}
-                {p.views_est != null && (
-                  <div className="flex flex-col gap-1 rounded-xl p-3"
-                    style={{ background: "rgba(165,163,255,0.08)", border: "1px solid rgba(165,163,255,0.18)" }}>
-                    <Eye size={16} style={{ color: "#a5a3ff" }} />
-                    <span className="font-bold tabular-nums" style={{ fontSize: 20, color: "#f7f8f8", letterSpacing: "-0.03em" }}>
-                      {formatNumber(p.views_est)}
-                    </span>
-                    <span style={{ fontSize: 11, color: "#a5a3ff", fontWeight: 600, letterSpacing: "0.04em" }}>KO'RISHLAR</span>
-                  </div>
-                )}
-                {/* ER tile */}
-                <div className="flex flex-col gap-1 rounded-xl p-3"
-                  style={{ background: `${color}14`, border: `1px solid ${color}30` }}>
-                  <TrendingUp size={16} style={{ color }} />
-                  <span className="font-bold tabular-nums" style={{ fontSize: 20, color: "#f7f8f8", letterSpacing: "-0.03em" }}>
-                    {p.engagement_score.toFixed(2)}
-                  </span>
-                  <span style={{ fontSize: 11, color, fontWeight: 600, letterSpacing: "0.04em" }}>ER SCORE</span>
-                </div>
-              </div>
-
-              {/* Expand hint */}
-              <div className="flex items-center justify-center mt-4 gap-1.5" style={{ color: "#62666d" }}>
-                {isOpen ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
-                <span style={{ fontSize: 12 }}>{isOpen ? "Yopish" : "Batafsil ko'rish"}</span>
               </div>
             </div>
 
@@ -840,7 +786,7 @@ export default function AnalysisPage() {
       )}
 
       {/* Top posts */}
-      <Section title="Eng yuqori postlar" subtitle={`Top ${data.top_posts.length} ta — hook, teglar va to'liq tahlil uchun bosing`} icon={TrendingUp} color="pink">
+      <Section title="Top 3 — eng ko'p ko'rilgan postlar" subtitle="Raqobatchilarning eng yuqori ko'rishli 3 ta postini to'liq tahlil" icon={TrendingUp} color="pink">
         <TopPostsList posts={data.top_posts} />
       </Section>
 

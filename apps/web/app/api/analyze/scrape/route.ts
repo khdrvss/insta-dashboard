@@ -177,26 +177,28 @@ interface PostAnalysis {
 }
 
 async function analyzePostsBatch(posts: ScrapedPost[], niche: string): Promise<PostAnalysis[]> {
-  const prompt = `You are an Instagram content strategist analyzing ${niche} competitor posts.
+  const prompt = `Siz ${niche} sohasidagi Instagram raqobatchilar postlarini tahlil qiluvchi kontent strategistsiz.
 
-Analyze these ${posts.length} posts and return a JSON array with one object per post:
+Bu ${posts.length} ta postni tahlil qiling va har bir post uchun bitta obyekt bo'lgan JSON massiv qaytaring.
 
-Posts:
+MUHIM: hook_text, value_prop, cta_text va power_words maydonlarini O'ZBEK TILIDA yozing.
+
+Postlar:
 ${posts.map((p, i) => `${i + 1}. Caption: "${(p.caption ?? "").slice(0, 300)}"`).join("\n")}
 
-For each post return:
+Har bir post uchun qaytaring:
 {
-  "hook_text": "first 10 words of caption or inferred hook",
-  "hook_type": one of: "question|shock|promise|story|stat|pov",
-  "value_prop": "main value offered in 1 sentence",
-  "cta_text": "call to action if present",
-  "pacing_style": one of: "fast|medium|slow",
-  "content_format": one of: "educational|testimonial|transformation|behind_scenes|promotional|entertainment",
-  "sentiment": one of: "positive|neutral|urgent",
-  "power_words": ["word1", "word2"]
+  "hook_text": "captionning birinchi 10 so'zi yoki xulosalangan hook (o'zbek tilida)",
+  "hook_type": quyidagilardan biri: "question|shock|promise|story|stat|pov",
+  "value_prop": "taklif qilingan asosiy qiymat 1 jumlada (o'zbek tilida)",
+  "cta_text": "mavjud bo'lsa harakat chaqiruvi (o'zbek tilida)",
+  "pacing_style": quyidagilardan biri: "fast|medium|slow",
+  "content_format": quyidagilardan biri: "educational|testimonial|transformation|behind_scenes|promotional|entertainment",
+  "sentiment": quyidagilardan biri: "positive|neutral|urgent",
+  "power_words": ["so'z1", "so'z2"] (o'zbek tilida)
 }
 
-Return ONLY a valid JSON array, no markdown.`;
+Faqat to'g'ri JSON massiv qaytaring, markdown yo'q.`;
 
   try {
     const response = await openai.chat.completions.create({

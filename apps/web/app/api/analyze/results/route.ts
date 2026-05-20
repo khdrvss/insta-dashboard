@@ -122,8 +122,8 @@ export async function GET() {
         posted_at: p.postedAt,
       }))
     )
-    .sort((a, b) => b.engagement_score - a.engagement_score)
-    .slice(0, 15);
+    .sort((a, b) => (b.views_est ?? 0) - (a.views_est ?? 0))
+    .slice(0, 3);
 
   // ── Engagement trend ────────────────────────────────────────────────────────
   const trendMap = new Map<string, { total: number; count: number }>();
