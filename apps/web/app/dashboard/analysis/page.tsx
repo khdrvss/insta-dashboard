@@ -209,83 +209,235 @@ function CompetitorCard({ c }: { c: any }) {
 }
 
 // ── Top posts ─────────────────────────────────────────────────────────────────
+// ── Rank medal config ─────────────────────────────────────────────────────────
+const RANK_CONFIG = [
+  { bg: "rgba(234,179,8,0.15)",   border: "rgba(234,179,8,0.35)",   text: "#fbbf24", label: "🥇" },
+  { bg: "rgba(148,163,184,0.12)", border: "rgba(148,163,184,0.3)",  text: "#cbd5e1", label: "🥈" },
+  { bg: "rgba(234,138,50,0.12)",  border: "rgba(234,138,50,0.3)",   text: "#fb923c", label: "🥉" },
+];
+const RANK_DEFAULT = { bg: "rgba(255,255,255,0.04)", border: "rgba(255,255,255,0.1)", text: "#8a8f98", label: "" };
+
+function ERBar({ score }: { score: number }) {
+  const pct  = Math.min(100, Math.max(0, score * 10));
+  const color = score >= 8 ? "#34d399" : score >= 5 ? "#a5a3ff" : score >= 3 ? "#fbbf24" : "#f87171";
+  return (
+    <div className="flex items-center gap-2 mt-1">
+      <div className="flex-1 h-1 rounded-full" style={{ background: "rgba(255,255,255,0.07)" }}>
+        <div className="h-1 rounded-full transition-all" style={{ width: `${pct}%`, background: color }} />
+      </div>
+      <span className="text-xs font-bold tabular-nums" style={{ color, letterSpacing: "-0.01em", minWidth: 44 }}>
+        {score.toFixed(2)} ER
+      </span>
+    </div>
+  );
+}
+
 function TopPostsList({ posts }: { posts: any[] }) {
   const [expanded, setExpanded] = useState<string | null>(null);
+
   return (
     <div className="space-y-3">
       {posts.map((p, i) => {
-        const isOpen = expanded === p.id;
+        const isOpen    = expanded === p.id;
+        const rank      = RANK_CONFIG[i] ?? RANK_DEFAULT;
+        const hookColor = HOOK_COLORS[p.hook_type] ?? "bg-white/5 text-white/50 border-white/10";
+
         return (
-          <div key={p.id}
-            className="rounded-xl border border-white/10 bg-white/5 overflow-hidden cursor-pointer hover:border-white/20 transition-all"
+          <div
+            key={p.id}
+            className="rounded-2xl overflow-hidden cursor-pointer transition-all duration-150"
+            style={{
+              background: isOpen ? "rgba(255,255,255,0.04)" : "rgba(255,255,255,0.025)",
+              border: `1px solid ${isOpen ? "rgba(255,255,255,0.12)" : "rgba(255,255,255,0.07)"}`,
+              boxShadow: isOpen ? "rgba(0,0,0,0.2) 0px 4px 16px" : "none",
+            }}
             onClick={() => setExpanded(isOpen ? null : p.id)}
           >
-            <div className="p-4">
-              <div className="flex items-start gap-3">
-                <div className={`h-7 w-7 rounded-lg flex items-center justify-center text-xs font-bold flex-shrink-0 ${i === 0 ? "bg-yellow-500/20 text-yellow-300" : i === 1 ? "bg-white/10 text-white/60" : i === 2 ? "bg-orange-500/20 text-orange-300" : "bg-white/5 text-white/30"}`}>
-                  {i + 1}
-                </div>
-                <div className="flex-1 min-w-0">
-                  {p.hook_text && (
-                    <p className="text-sm font-medium text-white leading-snug mb-2 line-clamp-2">"{p.hook_text}"</p>
+            {/* ── Main row ── */}
+            <div className="p-4 sm:p-5">
+              <div className="flex items-start gap-4">
+
+                {/* Rank medal */}
+                <div
+                  className="flex-shrink-0 flex flex-col items-center justify-center rounded-xl"
+                  style={{
+                    width: 44, minHeight: 44,
+                    background: rank.bg,
+                    border: `1px solid ${rank.border}`,
+                  }}
+                >
+                  {i < 3 ? (
+                    <span className="text-xl leading-none">{rank.label}</span>
+                  ) : (
+                    <span className="text-base font-bold tabular-nums" style={{ color: rank.text }}>
+                      {i + 1}
+                    </span>
                   )}
-                  <div className="flex flex-wrap gap-1.5">
-                    <span className="text-xs text-white/30">@{p.competitor_handle}</span>
-                    {p.hook_type && <span className={`text-xs px-2 py-0.5 rounded-lg border capitalize ${HOOK_COLORS[p.hook_type] ?? "bg-white/5 text-white/40 border-white/10"}`}>{p.hook_type}</span>}
-                    {p.content_format && <span className="text-xs px-2 py-0.5 rounded-lg bg-white/5 border border-white/10 text-white/50">{FORMAT_LABELS_UZ[p.content_format] ?? p.content_format}</span>}
-                    {p.sentiment && <span className={`text-xs px-2 py-0.5 rounded-lg ${SENTIMENT_COLORS[p.sentiment] ?? "bg-white/5 text-white/30"}`}>{p.sentiment === "positive" ? "Ijobiy" : p.sentiment === "urgent" ? "Shoshilinch" : "Neytral"}</span>}
-                    {p.pacing_style && <span className="text-xs px-2 py-0.5 rounded-lg bg-white/5 border border-white/10 text-white/40">{p.pacing_style === "fast" ? "Tez ⚡" : p.pacing_style === "slow" ? "Sekin 🐢" : "O'rta"}</span>}
+                </div>
+
+                {/* Content */}
+                <div className="flex-1 min-w-0">
+                  {/* Hook text — headline size */}
+                  {p.hook_text ? (
+                    <p
+                      className="font-semibold leading-snug mb-2"
+                      style={{ color: "#f7f8f8", fontSize: 15, letterSpacing: "-0.02em" }}
+                    >
+                      &ldquo;{p.hook_text}&rdquo;
+                    </p>
+                  ) : (
+                    <p className="text-sm mb-2" style={{ color: "#8a8f98", fontStyle: "italic" }}>
+                      Caption yo'q
+                    </p>
+                  )}
+
+                  {/* Handle + tags row */}
+                  <div className="flex items-center flex-wrap gap-1.5 mb-3">
+                    <span
+                      className="text-xs font-medium px-2 py-0.5 rounded-md"
+                      style={{ background: "rgba(255,255,255,0.06)", color: "#8a8f98", border: "1px solid rgba(255,255,255,0.08)" }}
+                    >
+                      @{p.competitor_handle}
+                    </span>
+                    {p.hook_type && (
+                      <span className={`text-xs px-2.5 py-0.5 rounded-md border capitalize font-medium ${hookColor}`}>
+                        {p.hook_type === "promise" ? "Va'da" : p.hook_type === "question" ? "Savol" : p.hook_type === "shock" ? "Shok" : p.hook_type === "story" ? "Hikoya" : p.hook_type}
+                      </span>
+                    )}
+                    {p.content_format && (
+                      <span className="text-xs px-2.5 py-0.5 rounded-md border font-medium"
+                        style={{ background: "rgba(255,255,255,0.04)", color: "#8a8f98", borderColor: "rgba(255,255,255,0.1)" }}>
+                        {FORMAT_LABELS_UZ[p.content_format] ?? p.content_format}
+                      </span>
+                    )}
+                    {p.sentiment && (
+                      <span className={`text-xs px-2.5 py-0.5 rounded-md font-medium ${SENTIMENT_COLORS[p.sentiment] ?? "bg-white/5 text-white/40"}`}>
+                        {p.sentiment === "positive" ? "Ijobiy" : p.sentiment === "urgent" ? "Shoshilinch" : "Neytral"}
+                      </span>
+                    )}
+                    {p.pacing_style && (
+                      <span className="text-xs px-2.5 py-0.5 rounded-md border"
+                        style={{ background: "rgba(255,255,255,0.04)", color: "#62666d", borderColor: "rgba(255,255,255,0.08)" }}>
+                        {p.pacing_style === "fast" ? "Tez ⚡" : p.pacing_style === "slow" ? "Sekin 🐢" : "O'rta"}
+                      </span>
+                    )}
                   </div>
-                  <div className="flex items-center gap-3 mt-2.5">
-                    {p.likes_est != null && <span className="flex items-center gap-1 text-xs text-white/40"><Heart size={10} className="text-pink-400" />{formatNumber(p.likes_est)}</span>}
-                    {p.comments_est != null && <span className="flex items-center gap-1 text-xs text-white/40"><MessageCircle size={10} className="text-blue-400" />{formatNumber(p.comments_est)}</span>}
-                    {p.views_est != null && <span className="flex items-center gap-1 text-xs text-white/40"><Eye size={10} className="text-violet-400" />{formatNumber(p.views_est)}</span>}
-                    <span className="ml-auto text-xs font-bold text-violet-300">{p.engagement_score.toFixed(1)} ER</span>
+
+                  {/* Stats chips */}
+                  <div className="flex items-center gap-2 flex-wrap">
+                    {p.likes_est != null && (
+                      <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg"
+                        style={{ background: "rgba(244,114,182,0.1)", border: "1px solid rgba(244,114,182,0.2)" }}>
+                        <Heart size={12} style={{ color: "#f472b6" }} />
+                        <span className="text-xs font-semibold tabular-nums" style={{ color: "#f7f8f8" }}>
+                          {formatNumber(p.likes_est)}
+                        </span>
+                      </div>
+                    )}
+                    {p.comments_est != null && (
+                      <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg"
+                        style={{ background: "rgba(96,165,250,0.1)", border: "1px solid rgba(96,165,250,0.2)" }}>
+                        <MessageCircle size={12} style={{ color: "#60a5fa" }} />
+                        <span className="text-xs font-semibold tabular-nums" style={{ color: "#f7f8f8" }}>
+                          {formatNumber(p.comments_est)}
+                        </span>
+                      </div>
+                    )}
+                    {p.views_est != null && (
+                      <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg"
+                        style={{ background: "rgba(165,163,255,0.1)", border: "1px solid rgba(165,163,255,0.2)" }}>
+                        <Eye size={12} style={{ color: "#a5a3ff" }} />
+                        <span className="text-xs font-semibold tabular-nums" style={{ color: "#f7f8f8" }}>
+                          {formatNumber(p.views_est)}
+                        </span>
+                      </div>
+                    )}
                   </div>
+
+                  {/* ER bar */}
+                  <ERBar score={p.engagement_score} />
+                </div>
+
+                {/* Expand chevron */}
+                <div className="flex-shrink-0 mt-1" style={{ color: "#62666d" }}>
+                  {isOpen
+                    ? <ChevronUp size={16} />
+                    : <ChevronDown size={16} />
+                  }
                 </div>
               </div>
+            </div>
 
-              {isOpen && (
-                <div className="mt-4 pt-4 border-t border-white/10 space-y-3">
+            {/* ── Expanded detail ── */}
+            {isOpen && (
+              <div
+                className="px-5 pb-5 space-y-4"
+                style={{ borderTop: "1px solid rgba(255,255,255,0.07)" }}
+                onClick={(e) => e.stopPropagation()}
+              >
+                <div className="pt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {p.value_prop && (
-                    <div>
-                      <p className="text-xs font-medium text-white/40 mb-1">Qiymat taklifi <span className="text-white/20">(Value prop)</span></p>
-                      <p className="text-xs text-white/60">{p.value_prop}</p>
+                    <div className="rounded-xl p-3.5" style={{ background: "rgba(165,163,255,0.06)", border: "1px solid rgba(165,163,255,0.12)" }}>
+                      <p className="text-xs font-semibold mb-1.5 uppercase tracking-wide" style={{ color: "#a5a3ff" }}>
+                        Qiymat taklifi
+                      </p>
+                      <p className="text-sm leading-relaxed" style={{ color: "#d0d6e0" }}>{p.value_prop}</p>
                     </div>
                   )}
                   {p.cta_text && (
-                    <div>
-                      <p className="text-xs font-medium text-white/40 mb-1">Harakat chaqiruvi <span className="text-white/20">(CTA)</span></p>
-                      <span className="inline-block text-xs px-3 py-1 rounded-lg bg-green-500/10 border border-green-500/20 text-green-300">{p.cta_text}</span>
-                    </div>
-                  )}
-                  {p.power_words?.length > 0 && (
-                    <div>
-                      <p className="text-xs font-medium text-white/40 mb-1.5">Kuchli so'zlar <span className="text-white/20">(Power words)</span></p>
-                      <div className="flex flex-wrap gap-1.5">
-                        {p.power_words.map((w: string) => (
-                          <span key={w} className="text-xs px-2 py-0.5 rounded-lg bg-orange-500/10 border border-orange-500/20 text-orange-300">{w}</span>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                  {p.hashtags?.length > 0 && (
-                    <div>
-                      <p className="text-xs font-medium text-white/40 mb-1.5">Hashtaglar</p>
-                      <div className="flex flex-wrap gap-1">
-                        {p.hashtags.map((h: string) => <span key={h} className="text-xs text-violet-400/70">#{h}</span>)}
-                      </div>
-                    </div>
-                  )}
-                  {p.caption && (
-                    <div>
-                      <p className="text-xs font-medium text-white/40 mb-1">To'liq caption</p>
-                      <p className="text-xs text-white/40 leading-relaxed">{p.caption.slice(0, 400)}{p.caption.length > 400 ? "…" : ""}</p>
+                    <div className="rounded-xl p-3.5" style={{ background: "rgba(52,211,153,0.06)", border: "1px solid rgba(52,211,153,0.15)" }}>
+                      <p className="text-xs font-semibold mb-1.5 uppercase tracking-wide" style={{ color: "#34d399" }}>
+                        Harakat chaqiruvi (CTA)
+                      </p>
+                      <p className="text-sm font-medium" style={{ color: "#d0d6e0" }}>{p.cta_text}</p>
                     </div>
                   )}
                 </div>
-              )}
-            </div>
+
+                {p.power_words?.length > 0 && (
+                  <div>
+                    <p className="text-xs font-semibold mb-2 uppercase tracking-wide" style={{ color: "#fb923c" }}>
+                      Kuchli so'zlar
+                    </p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {p.power_words.map((w: string) => (
+                        <span key={w} className="text-xs px-2.5 py-1 rounded-lg font-medium"
+                          style={{ background: "rgba(251,146,60,0.1)", border: "1px solid rgba(251,146,60,0.2)", color: "#fb923c" }}>
+                          {w}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {p.hashtags?.length > 0 && (
+                  <div>
+                    <p className="text-xs font-semibold mb-2 uppercase tracking-wide" style={{ color: "#8a8f98" }}>
+                      Hashtaglar
+                    </p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {p.hashtags.map((h: string) => (
+                        <span key={h} className="text-xs px-2 py-0.5 rounded-md"
+                          style={{ background: "rgba(165,163,255,0.08)", color: "#a5a3ff" }}>
+                          #{h}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {p.caption && (
+                  <div>
+                    <p className="text-xs font-semibold mb-2 uppercase tracking-wide" style={{ color: "#8a8f98" }}>
+                      To'liq caption
+                    </p>
+                    <p className="text-sm leading-relaxed" style={{ color: "#62666d" }}>
+                      {p.caption.slice(0, 400)}{p.caption.length > 400 ? "…" : ""}
+                    </p>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         );
       })}
@@ -626,7 +778,7 @@ export default function AnalysisPage() {
       )}
 
       {/* Top posts */}
-      <Section title="Eng yuqori postlar" subtitle={`Top ${data.top_posts.length} ta post — bosib batafsil ma'lumot ko'ring (Top performing posts)`} icon={TrendingUp} color="pink">
+      <Section title="Eng yuqori postlar" subtitle={`Top ${data.top_posts.length} ta — hook, teglar va to'liq tahlil uchun bosing`} icon={TrendingUp} color="pink">
         <TopPostsList posts={data.top_posts} />
       </Section>
 
