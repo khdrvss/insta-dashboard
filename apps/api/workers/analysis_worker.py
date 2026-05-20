@@ -7,11 +7,10 @@ Fetches competitor posts, transcribes, analyzes, embeds.
 import os
 import asyncio
 import json
-import tempfile
 from pathlib import Path
 from typing import Optional
 from services.scraper import fetch_competitor_posts
-from services.ai import analyze_video_content, transcribe_audio, summarize_niche_patterns
+from services.ai import analyze_video_content, summarize_niche_patterns
 from services.vector_search import upsert_analysis
 from utils.cache import set_cached, cache_key, ANALYSIS_TTL
 
@@ -58,17 +57,10 @@ async def run_analysis(
 
             for post in top_posts:
                 try:
-                    # Transcribe audio if video URL available
-                    transcript: Optional[str] = None
-                    if post.get("video_url") and os.getenv("OPENAI_API_KEY"):
-                        transcript = await transcribe_url(post["video_url"])
-
-                    # Analyze with Gemini/Claude
                     analysis = await analyze_video_content(
                         video_url=post.get("video_url", ""),
                         caption=post.get("caption", ""),
                         niche=niche,
-                        transcript=transcript,
                     )
                     analysis["handle"] = handle
                     analysis["engagement_score"] = post.get("engagement_score", 0)
@@ -132,23 +124,3 @@ def estimate_engagement(post: dict) -> float:
     return min(100, raw * 5)
 
 
-async def transcribe_url(video_url: str) -> Optional[str]:
-    """Download video and transcribe audio with Whisper."""
-    try:
-        import httpx
-        async with httpx.AsyncClient(timeout=30) as client:
-            resp = await client.get(video_url)
-            if not resp.is_success:
-                return None
-
-        with tempfile.NamedTemporaryFile(suffix=".mp4", delete=False) as f:
-            f.write(resp.content)
-            tmp_path = f.name
-
-        transcript = await transcribe_audio(tmp_path)
-        Path(tmp_path).unlink(missing_ok=True)  # delete immediately
-        return transcript
-
-    except Exception as e:
-        print(f"[transcribe] Failed: {e}")
-        return None

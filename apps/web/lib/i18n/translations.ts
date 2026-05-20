@@ -10,6 +10,7 @@ export const t = {
       insights:  "Kontent tushunchalari",
       hooks:     "Hook kutubxonasi",
       scripts:   "Skript generatori",
+      settings:  "Sozlamalar",
     },
     sidebar: {
       freePlan:    "Bepul reja",
@@ -280,6 +281,7 @@ export const t = {
       insights:    "Content Insights",
       hooks:       "Hook Library",
       scripts:     "Script Generator",
+      settings:    "Settings",
     },
     sidebar: {
       freePlan:    "Free Plan",

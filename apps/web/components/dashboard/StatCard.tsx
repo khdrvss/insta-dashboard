@@ -2,32 +2,12 @@ import { LucideIcon } from "lucide-react";
 
 type Color = "violet" | "pink" | "orange" | "green" | "blue";
 
-const COLOR_MAP: Record<Color, { icon: string; bg: string; border: string }> = {
-  violet: {
-    icon: "text-violet-400",
-    bg: "bg-violet-500/10",
-    border: "border-violet-500/20",
-  },
-  pink: {
-    icon: "text-pink-400",
-    bg: "bg-pink-500/10",
-    border: "border-pink-500/20",
-  },
-  orange: {
-    icon: "text-orange-400",
-    bg: "bg-orange-500/10",
-    border: "border-orange-500/20",
-  },
-  green: {
-    icon: "text-green-400",
-    bg: "bg-green-500/10",
-    border: "border-green-500/20",
-  },
-  blue: {
-    icon: "text-blue-400",
-    bg: "bg-blue-500/10",
-    border: "border-blue-500/20",
-  },
+const COLOR_MAP: Record<Color, { icon: string; glow: string; bg: string; border: string }> = {
+  violet: { icon: "#a5a3ff", glow: "rgba(109,104,255,0.15)", bg: "rgba(109,104,255,0.1)",  border: "rgba(109,104,255,0.2)" },
+  pink:   { icon: "#f472b6", glow: "rgba(236,72,153,0.15)",  bg: "rgba(236,72,153,0.1)",   border: "rgba(236,72,153,0.2)" },
+  orange: { icon: "#fb923c", glow: "rgba(249,115,22,0.15)",  bg: "rgba(249,115,22,0.1)",   border: "rgba(249,115,22,0.2)" },
+  green:  { icon: "#34d399", glow: "rgba(16,185,129,0.15)",  bg: "rgba(16,185,129,0.1)",   border: "rgba(16,185,129,0.2)" },
+  blue:   { icon: "#60a5fa", glow: "rgba(59,130,246,0.15)",  bg: "rgba(59,130,246,0.1)",   border: "rgba(59,130,246,0.2)" },
 };
 
 interface StatCardProps {
@@ -40,30 +20,66 @@ interface StatCardProps {
 }
 
 export function StatCard({ label, value, subtext, icon: Icon, color, trend }: StatCardProps) {
-  const colors = COLOR_MAP[color];
+  const c = COLOR_MAP[color];
   return (
-    <div className="rounded-2xl border border-white/10 bg-white/5 p-5">
+    <div
+      className="rounded-xl p-5 transition-all duration-200 group"
+      style={{
+        background: "rgba(255,255,255,0.02)",
+        border: "1px solid rgba(255,255,255,0.06)",
+        boxShadow: "rgba(0,0,0,0.2) 0px 0px 0px 1px inset, rgba(0,0,0,0.08) 0px 2px 8px",
+      }}
+      onMouseEnter={(e) => {
+        (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.035)";
+        (e.currentTarget as HTMLElement).style.borderColor = "rgba(255,255,255,0.09)";
+      }}
+      onMouseLeave={(e) => {
+        (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.02)";
+        (e.currentTarget as HTMLElement).style.borderColor = "rgba(255,255,255,0.06)";
+      }}
+    >
       <div className="flex items-start justify-between mb-4">
+        {/* Icon bubble */}
         <div
-          className={`h-9 w-9 rounded-xl ${colors.bg} border ${colors.border} flex items-center justify-center`}
+          className="h-8 w-8 rounded-lg flex items-center justify-center"
+          style={{
+            background: c.bg,
+            border: `1px solid ${c.border}`,
+            boxShadow: `0 0 12px ${c.glow}`,
+          }}
         >
-          <Icon className={`h-4.5 w-4.5 ${colors.icon}`} size={18} />
+          <Icon size={15} style={{ color: c.icon }} />
         </div>
+
         {trend && (
           <span
-            className={`text-xs font-medium px-2 py-0.5 rounded-full ${
+            className="text-[11px] font-semibold px-2 py-0.5 rounded-full"
+            style={
               trend.positive
-                ? "text-green-400 bg-green-500/10"
-                : "text-red-400 bg-red-500/10"
-            }`}
+                ? { color: "#34d399", background: "rgba(16,185,129,0.1)", border: "1px solid rgba(16,185,129,0.2)" }
+                : { color: "#f87171", background: "rgba(248,113,113,0.1)", border: "1px solid rgba(248,113,113,0.2)" }
+            }
           >
             {trend.positive ? "+" : ""}{trend.value}%
           </span>
         )}
       </div>
-      <div className="text-2xl font-bold text-white mb-1">{value}</div>
-      <div className="text-sm text-white/50">{label}</div>
-      {subtext && <div className="text-xs text-white/25 mt-0.5">{subtext}</div>}
+
+      {/* Value */}
+      <div
+        className="text-2xl font-bold mb-1"
+        style={{ color: "#f7f8f8", letterSpacing: "-0.03em" }}
+      >
+        {value}
+      </div>
+
+      {/* Label */}
+      <div className="text-[13px]" style={{ color: "#8a8f98" }}>{label}</div>
+
+      {/* Subtext */}
+      {subtext && (
+        <div className="text-[11px] mt-0.5" style={{ color: "#62666d" }}>{subtext}</div>
+      )}
     </div>
   );
 }

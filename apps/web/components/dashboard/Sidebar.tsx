@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   BarChart3, Brain, Lightbulb, Sparkles, Users, Wand2,
-  ChevronRight, Instagram, Loader2, BookOpen,
+  ChevronRight, Instagram, Loader2, BookOpen, Settings,
 } from "lucide-react";
 import { useLang } from "@/lib/i18n/context";
 import { useScripts } from "@/lib/scripts-context";
@@ -21,6 +21,7 @@ export function Sidebar() {
     { href: "/dashboard/insights",    label: T.nav.insights,    icon: Lightbulb },
     { href: "/dashboard/hooks",       label: T.nav.hooks,       icon: BookOpen },
     { href: "/dashboard/scripts",     label: T.nav.scripts,     icon: Wand2, highlight: true },
+    { href: "/dashboard/settings",    label: T.nav.settings,    icon: Settings },
   ];
 
   function isActive(href: string, exact?: boolean) {
@@ -29,52 +30,96 @@ export function Sidebar() {
   }
 
   return (
-    <aside className="hidden md:flex w-60 flex-col border-r border-white/10 bg-[#0d1117] flex-shrink-0">
+    <aside className="hidden md:flex w-56 flex-col flex-shrink-0"
+      style={{
+        background: "#0a0b0c",
+        borderRight: "1px solid rgba(255,255,255,0.06)",
+      }}
+    >
       {/* Logo */}
-      <div className="px-5 py-5 border-b border-white/10">
-        <Link href="/" className="flex items-center gap-2.5">
-          <div className="h-8 w-8 rounded-lg gradient-brand flex items-center justify-center flex-shrink-0">
-            <Sparkles className="h-4 w-4 text-white" />
+      <div className="px-4 py-4" style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
+        <Link href="/" className="flex items-center gap-2.5 group">
+          <div className="h-7 w-7 rounded-lg gradient-brand flex items-center justify-center flex-shrink-0 shadow-glow">
+            <Sparkles className="h-3.5 w-3.5 text-white" />
           </div>
-          <span className="font-bold text-white text-lg">InstaIntel</span>
+          <span
+            className="font-semibold text-base tracking-tight"
+            style={{ color: "#f7f8f8", letterSpacing: "-0.02em" }}
+          >
+            InstaIntel
+          </span>
         </Link>
       </div>
 
       {/* Nav */}
-      <nav className="flex-1 px-3 py-4 space-y-1">
+      <nav className="flex-1 px-2 py-3 space-y-0.5">
         {NAV_ITEMS.map(({ href, label, icon: Icon, exact, highlight }) => {
           const active = isActive(href, exact);
           return (
             <Link
               key={href}
               href={href}
-              className={`group flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${
+              className="group flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-[13px] font-medium transition-all duration-150"
+              style={
                 active
-                  ? "bg-violet-600/20 text-white border border-violet-500/30"
-                  : "text-white/60 hover:text-white hover:bg-white/5 border border-transparent"
-              }`}
+                  ? {
+                      background: "rgba(109,104,255,0.12)",
+                      color: "#f7f8f8",
+                      border: "1px solid rgba(109,104,255,0.2)",
+                      boxShadow: "inset 0 0 12px rgba(109,104,255,0.06)",
+                    }
+                  : {
+                      background: "transparent",
+                      color: "#8a8f98",
+                      border: "1px solid transparent",
+                    }
+              }
+              onMouseEnter={(e) => {
+                if (!active) {
+                  (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.04)";
+                  (e.currentTarget as HTMLElement).style.color = "#d0d6e0";
+                  (e.currentTarget as HTMLElement).style.border = "1px solid rgba(255,255,255,0.06)";
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (!active) {
+                  (e.currentTarget as HTMLElement).style.background = "transparent";
+                  (e.currentTarget as HTMLElement).style.color = "#8a8f98";
+                  (e.currentTarget as HTMLElement).style.border = "1px solid transparent";
+                }
+              }}
             >
               <Icon
-                className={`h-4.5 w-4.5 flex-shrink-0 transition-colors ${
-                  active
-                    ? "text-violet-400"
-                    : highlight
-                    ? "text-pink-400"
-                    : "text-white/40 group-hover:text-white/60"
-                }`}
-                size={18}
+                size={15}
+                className="flex-shrink-0 transition-colors"
+                style={{
+                  color: active ? "#a5a3ff" : highlight ? "#e879f9" : undefined,
+                  opacity: active ? 1 : 0.7,
+                }}
               />
-              <span className="flex-1">{label}</span>
+              <span className="flex-1 truncate">{label}</span>
+
               {active && (
-                <ChevronRight className="h-3.5 w-3.5 text-violet-400 opacity-70" />
+                <ChevronRight size={12} style={{ color: "#a5a3ff", opacity: 0.6 }} />
               )}
+
               {highlight && !active && (
                 scriptsLoading
-                  ? <Loader2 className="h-3.5 w-3.5 text-pink-400 animate-spin flex-shrink-0" />
-                  : <span className="text-xs px-1.5 py-0.5 rounded-full bg-pink-500/20 text-pink-400 font-medium">AI</span>
+                  ? <Loader2 size={11} className="animate-spin flex-shrink-0" style={{ color: "#e879f9" }} />
+                  : <span
+                      className="text-[10px] px-1.5 py-0.5 rounded-md font-semibold flex-shrink-0"
+                      style={{
+                        background: "rgba(232,121,249,0.12)",
+                        color: "#e879f9",
+                        border: "1px solid rgba(232,121,249,0.2)",
+                        letterSpacing: "0.02em",
+                      }}
+                    >
+                      AI
+                    </span>
               )}
               {highlight && active && scriptsLoading && (
-                <Loader2 className="h-3.5 w-3.5 text-violet-400 animate-spin flex-shrink-0" />
+                <Loader2 size={11} className="animate-spin flex-shrink-0" style={{ color: "#a5a3ff" }} />
               )}
             </Link>
           );
@@ -82,16 +127,27 @@ export function Sidebar() {
       </nav>
 
       {/* Footer */}
-      <div className="px-4 py-4 border-t border-white/10">
-        <div className="rounded-xl bg-violet-500/10 border border-violet-500/20 p-3">
+      <div className="px-3 py-3" style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}>
+        <div
+          className="rounded-xl p-3"
+          style={{
+            background: "rgba(109,104,255,0.07)",
+            border: "1px solid rgba(109,104,255,0.15)",
+          }}
+        >
           <div className="flex items-center gap-2 mb-1.5">
-            <Brain className="h-4 w-4 text-violet-400" />
-            <span className="text-xs font-medium text-white">{T.sidebar.freePlan}</span>
+            <Brain size={13} style={{ color: "#a5a3ff" }} />
+            <span className="text-xs font-semibold" style={{ color: "#f7f8f8", letterSpacing: "-0.01em" }}>
+              {T.sidebar.freePlan}
+            </span>
           </div>
-          <p className="text-xs text-white/40 mb-2">{T.sidebar.scriptQuota}</p>
+          <p className="text-[11px] mb-2.5" style={{ color: "#62666d" }}>
+            {T.sidebar.scriptQuota}
+          </p>
           <Link
             href="/upgrade"
-            className="block text-center text-xs font-medium gradient-brand text-white py-1.5 rounded-lg hover:opacity-90 transition-opacity"
+            className="block text-center text-[11px] font-semibold gradient-brand text-white py-1.5 rounded-lg hover:opacity-90 transition-opacity"
+            style={{ letterSpacing: "-0.01em" }}
           >
             {T.sidebar.upgradeCta}
           </Link>

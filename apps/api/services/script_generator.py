@@ -6,11 +6,14 @@ Queries Pinecone for niche patterns, builds context, calls Claude
 import os
 import json
 from typing import Literal, Optional
-import anthropic
+import openai
 from tenacity import retry, stop_after_attempt, wait_exponential
 
-_claude = anthropic.Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
-MODEL = os.getenv("ANTHROPIC_MODEL", "claude-sonnet-4-20250514")
+_client = openai.OpenAI(
+    api_key=os.getenv("OPENROUTER_API_KEY", ""),
+    base_url="https://openrouter.ai/api/v1",
+)
+MODEL = os.getenv("OPENROUTER_MODEL", "google/gemini-2.5-flash")
 
 
 @retry(stop=stop_after_attempt(3), wait=wait_exponential(multiplier=1, min=2, max=10))
@@ -71,21 +74,20 @@ Return JSON: {{"scripts": [{{
   "concept_title": "string",
   "hook_type": "string",
   "borrowed_pattern": "string (which pattern + why it works)",
-  "scenes": [{{"timecode": "0:00-0:03", "visual": "string", "on_screen_text": "string|null", "audio": "string"}}],
-  "suggested_audio_style": "string",
+  "scenes": [{{"timecode": "0:00-0:03", "visual": "string", "on_screen_text": "string|null"}}],
   "caption": "string (150-200 chars)",
   "hashtags": ["10 hashtags without #"],
   "thumbnail_idea": "string",
   "predicted_strength": "hook|retention|cta|balanced"
 }}]}}"""
 
-    message = _claude.messages.create(
+    message = _client.chat.completions.create(
         model=MODEL,
         max_tokens=4096,
         messages=[{"role": "user", "content": prompt}],
-        temperature=temperature,  # type: ignore[call-arg]
+        temperature=temperature,
     )
 
-    raw = message.content[0].text
+    raw = message.choices[0].message.content or ""
     data = json.loads(raw[raw.find("{"):raw.rfind("}") + 1])
     return data.get("scripts", [])

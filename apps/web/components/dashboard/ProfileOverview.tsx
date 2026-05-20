@@ -92,13 +92,18 @@ export function ProfileOverview() {
 
   async function handleSync() {
     setSyncing(true);
+    setError(null);
     try {
       const res = await fetch("/api/profile/posts", { method: "POST" });
       const data = await res.json();
-      if (data.redirect) {
+      if (data.tokenExpired) {
+        setError("token_expired");
+      } else if (data.redirect) {
         window.location.href = data.redirect;
-      } else {
+      } else if (data.synced) {
         await loadProfile();
+      } else {
+        setError(data.error ?? "Sync failed — please try again");
       }
     } catch {
       setError("Sync failed — please try again");
@@ -181,9 +186,26 @@ export function ProfileOverview() {
       )}
 
       {/* Error */}
-      {error && (
+      {error && error !== "token_expired" && (
         <div className="rounded-lg border border-red-500/20 bg-red-500/10 px-3 py-2 text-xs text-red-300">
           {error}
+        </div>
+      )}
+      {error === "token_expired" && (
+        <div className="rounded-lg border border-amber-500/30 bg-amber-500/10 px-4 py-3 flex items-center justify-between gap-3">
+          <div className="flex items-center gap-2.5 min-w-0">
+            <AlertCircle className="h-4 w-4 text-amber-400 flex-shrink-0" />
+            <p className="text-xs text-amber-200">
+              Instagram token expired. Reconnect to sync your latest posts.
+            </p>
+          </div>
+          <a
+            href="/api/auth/instagram"
+            className="flex-shrink-0 flex items-center gap-1.5 bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/40 text-amber-300 text-xs font-medium px-3 py-1.5 rounded-lg transition-colors"
+          >
+            <Instagram className="h-3.5 w-3.5" />
+            Reconnect
+          </a>
         </div>
       )}
 

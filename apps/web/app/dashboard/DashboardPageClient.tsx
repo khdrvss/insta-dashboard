@@ -229,8 +229,13 @@ export function DashboardPageClient({ stats }: { stats: Stats }) {
     <div className="space-y-8 animate-fade-in">
       {/* Page header */}
       <div>
-        <h1 className="text-2xl font-bold text-white">{d.pageTitle}</h1>
-        <p className="text-white/50 mt-1">{d.pageSubtitle}</p>
+        <h1
+          className="text-2xl font-bold"
+          style={{ color: "#f7f8f8", letterSpacing: "-0.035em" }}
+        >
+          {d.pageTitle}
+        </h1>
+        <p className="mt-1 text-sm" style={{ color: "#62666d" }}>{d.pageSubtitle}</p>
       </div>
 
       {/* Stats row */}
