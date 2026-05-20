@@ -211,35 +211,24 @@ function CompetitorCard({ c }: { c: any }) {
 // ── Top posts ─────────────────────────────────────────────────────────────────
 // ── Rank medal config ─────────────────────────────────────────────────────────
 const RANK_CONFIG = [
-  { bg: "rgba(234,179,8,0.15)",   border: "rgba(234,179,8,0.35)",   text: "#fbbf24", label: "🥇" },
-  { bg: "rgba(148,163,184,0.12)", border: "rgba(148,163,184,0.3)",  text: "#cbd5e1", label: "🥈" },
-  { bg: "rgba(234,138,50,0.12)",  border: "rgba(234,138,50,0.3)",   text: "#fb923c", label: "🥉" },
+  { bg: "rgba(234,179,8,0.12)",   border: "rgba(234,179,8,0.3)",   text: "#fbbf24", emoji: "🥇" },
+  { bg: "rgba(148,163,184,0.10)", border: "rgba(148,163,184,0.25)", text: "#cbd5e1", emoji: "🥈" },
+  { bg: "rgba(234,138,50,0.10)",  border: "rgba(234,138,50,0.25)",  text: "#fb923c", emoji: "🥉" },
 ];
-const RANK_DEFAULT = { bg: "rgba(255,255,255,0.04)", border: "rgba(255,255,255,0.1)", text: "#8a8f98", label: "" };
 
-function ERBar({ score }: { score: number }) {
-  const pct  = Math.min(100, Math.max(0, score * 10));
-  const color = score >= 8 ? "#34d399" : score >= 5 ? "#a5a3ff" : score >= 3 ? "#fbbf24" : "#f87171";
-  return (
-    <div className="flex items-center gap-2 mt-1">
-      <div className="flex-1 h-1 rounded-full" style={{ background: "rgba(255,255,255,0.07)" }}>
-        <div className="h-1 rounded-full transition-all" style={{ width: `${pct}%`, background: color }} />
-      </div>
-      <span className="text-xs font-bold tabular-nums" style={{ color, letterSpacing: "-0.01em", minWidth: 44 }}>
-        {score.toFixed(2)} ER
-      </span>
-    </div>
-  );
+function erColor(score: number) {
+  return score >= 8 ? "#34d399" : score >= 4 ? "#a5a3ff" : score >= 2 ? "#fbbf24" : "#f87171";
 }
 
 function TopPostsList({ posts }: { posts: any[] }) {
   const [expanded, setExpanded] = useState<string | null>(null);
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-4">
       {posts.map((p, i) => {
-        const isOpen    = expanded === p.id;
-        const rank      = RANK_CONFIG[i] ?? RANK_DEFAULT;
+        const isOpen = expanded === p.id;
+        const rank   = RANK_CONFIG[i];
+        const color  = erColor(p.engagement_score);
         const hookColor = HOOK_COLORS[p.hook_type] ?? "bg-white/5 text-white/50 border-white/10";
 
         return (
@@ -247,124 +236,135 @@ function TopPostsList({ posts }: { posts: any[] }) {
             key={p.id}
             className="rounded-2xl overflow-hidden cursor-pointer transition-all duration-150"
             style={{
-              background: isOpen ? "rgba(255,255,255,0.04)" : "rgba(255,255,255,0.025)",
-              border: `1px solid ${isOpen ? "rgba(255,255,255,0.12)" : "rgba(255,255,255,0.07)"}`,
-              boxShadow: isOpen ? "rgba(0,0,0,0.2) 0px 4px 16px" : "none",
+              background: isOpen ? "rgba(255,255,255,0.045)" : "rgba(255,255,255,0.03)",
+              border: `1px solid ${isOpen ? "rgba(255,255,255,0.14)" : "rgba(255,255,255,0.08)"}`,
             }}
             onClick={() => setExpanded(isOpen ? null : p.id)}
           >
-            {/* ── Main row ── */}
-            <div className="p-4 sm:p-5">
-              <div className="flex items-start gap-4">
+            {/* ── Main card ── */}
+            <div className="p-5 sm:p-6">
+              {/* Top row: rank + hook text + ER score */}
+              <div className="flex items-start gap-4 mb-4">
 
-                {/* Rank medal */}
+                {/* Rank badge */}
                 <div
-                  className="flex-shrink-0 flex flex-col items-center justify-center rounded-xl"
+                  className="flex-shrink-0 flex items-center justify-center rounded-xl"
                   style={{
-                    width: 44, minHeight: 44,
-                    background: rank.bg,
-                    border: `1px solid ${rank.border}`,
+                    width: 52, height: 52,
+                    background: rank?.bg ?? "rgba(255,255,255,0.05)",
+                    border: `1px solid ${rank?.border ?? "rgba(255,255,255,0.1)"}`,
                   }}
                 >
                   {i < 3 ? (
-                    <span className="text-xl leading-none">{rank.label}</span>
+                    <span style={{ fontSize: 26, lineHeight: 1 }}>{rank!.emoji}</span>
                   ) : (
-                    <span className="text-base font-bold tabular-nums" style={{ color: rank.text }}>
+                    <span className="font-bold tabular-nums" style={{ fontSize: 20, color: "#8a8f98" }}>
                       {i + 1}
                     </span>
                   )}
                 </div>
 
-                {/* Content */}
-                <div className="flex-1 min-w-0">
-                  {/* Hook text — headline size */}
+                {/* Hook text */}
+                <div className="flex-1 min-w-0 pt-1">
                   {p.hook_text ? (
-                    <p
-                      className="font-semibold leading-snug mb-2"
-                      style={{ color: "#f7f8f8", fontSize: 15, letterSpacing: "-0.02em" }}
-                    >
+                    <p className="font-semibold leading-snug" style={{ color: "#f7f8f8", fontSize: 16, letterSpacing: "-0.025em" }}>
                       &ldquo;{p.hook_text}&rdquo;
                     </p>
                   ) : (
-                    <p className="text-sm mb-2" style={{ color: "#8a8f98", fontStyle: "italic" }}>
-                      Caption yo'q
-                    </p>
+                    <p style={{ color: "#62666d", fontSize: 15, fontStyle: "italic" }}>Caption mavjud emas</p>
                   )}
+                  <p className="mt-1.5 font-medium" style={{ color: "#8a8f98", fontSize: 13 }}>
+                    @{p.competitor_handle}
+                  </p>
+                </div>
 
-                  {/* Handle + tags row */}
-                  <div className="flex items-center flex-wrap gap-1.5 mb-3">
-                    <span
-                      className="text-xs font-medium px-2 py-0.5 rounded-md"
-                      style={{ background: "rgba(255,255,255,0.06)", color: "#8a8f98", border: "1px solid rgba(255,255,255,0.08)" }}
-                    >
-                      @{p.competitor_handle}
+                {/* ER score — big & bold */}
+                <div className="flex-shrink-0 text-right pt-1">
+                  <div className="font-bold tabular-nums leading-none" style={{ fontSize: 28, color, letterSpacing: "-0.04em" }}>
+                    {p.engagement_score.toFixed(2)}
+                  </div>
+                  <div className="font-semibold mt-0.5" style={{ fontSize: 11, color: "rgba(255,255,255,0.35)", letterSpacing: "0.06em" }}>
+                    ER SCORE
+                  </div>
+                </div>
+              </div>
+
+              {/* Tags row */}
+              <div className="flex flex-wrap gap-2 mb-4">
+                {p.hook_type && (
+                  <span className={`text-sm px-3 py-1 rounded-lg border font-medium capitalize ${hookColor}`}>
+                    {p.hook_type === "promise" ? "Va'da" : p.hook_type === "question" ? "Savol" : p.hook_type === "shock" ? "Shok" : p.hook_type === "story" ? "Hikoya" : p.hook_type}
+                  </span>
+                )}
+                {p.content_format && (
+                  <span className="text-sm px-3 py-1 rounded-lg border font-medium"
+                    style={{ background: "rgba(255,255,255,0.05)", color: "#d0d6e0", borderColor: "rgba(255,255,255,0.1)" }}>
+                    {FORMAT_LABELS_UZ[p.content_format] ?? p.content_format}
+                  </span>
+                )}
+                {p.sentiment && (
+                  <span className={`text-sm px-3 py-1 rounded-lg font-medium ${SENTIMENT_COLORS[p.sentiment] ?? "bg-white/5 text-white/40"}`}>
+                    {p.sentiment === "positive" ? "Ijobiy" : p.sentiment === "urgent" ? "Shoshilinch" : "Neytral"}
+                  </span>
+                )}
+                {p.pacing_style && (
+                  <span className="text-sm px-3 py-1 rounded-lg border"
+                    style={{ background: "rgba(255,255,255,0.04)", color: "#8a8f98", borderColor: "rgba(255,255,255,0.08)" }}>
+                    {p.pacing_style === "fast" ? "Tez ⚡" : p.pacing_style === "slow" ? "Sekin 🐢" : "O'rta"}
+                  </span>
+                )}
+              </div>
+
+              {/* Stats row — big numbers */}
+              <div
+                className="grid gap-3"
+                style={{ gridTemplateColumns: "repeat(auto-fit, minmax(90px, 1fr))" }}
+              >
+                {p.likes_est != null && (
+                  <div className="flex flex-col gap-1 rounded-xl p-3"
+                    style={{ background: "rgba(244,114,182,0.08)", border: "1px solid rgba(244,114,182,0.18)" }}>
+                    <Heart size={16} style={{ color: "#f472b6" }} />
+                    <span className="font-bold tabular-nums" style={{ fontSize: 20, color: "#f7f8f8", letterSpacing: "-0.03em" }}>
+                      {formatNumber(p.likes_est)}
                     </span>
-                    {p.hook_type && (
-                      <span className={`text-xs px-2.5 py-0.5 rounded-md border capitalize font-medium ${hookColor}`}>
-                        {p.hook_type === "promise" ? "Va'da" : p.hook_type === "question" ? "Savol" : p.hook_type === "shock" ? "Shok" : p.hook_type === "story" ? "Hikoya" : p.hook_type}
-                      </span>
-                    )}
-                    {p.content_format && (
-                      <span className="text-xs px-2.5 py-0.5 rounded-md border font-medium"
-                        style={{ background: "rgba(255,255,255,0.04)", color: "#8a8f98", borderColor: "rgba(255,255,255,0.1)" }}>
-                        {FORMAT_LABELS_UZ[p.content_format] ?? p.content_format}
-                      </span>
-                    )}
-                    {p.sentiment && (
-                      <span className={`text-xs px-2.5 py-0.5 rounded-md font-medium ${SENTIMENT_COLORS[p.sentiment] ?? "bg-white/5 text-white/40"}`}>
-                        {p.sentiment === "positive" ? "Ijobiy" : p.sentiment === "urgent" ? "Shoshilinch" : "Neytral"}
-                      </span>
-                    )}
-                    {p.pacing_style && (
-                      <span className="text-xs px-2.5 py-0.5 rounded-md border"
-                        style={{ background: "rgba(255,255,255,0.04)", color: "#62666d", borderColor: "rgba(255,255,255,0.08)" }}>
-                        {p.pacing_style === "fast" ? "Tez ⚡" : p.pacing_style === "slow" ? "Sekin 🐢" : "O'rta"}
-                      </span>
-                    )}
+                    <span style={{ fontSize: 11, color: "#f472b6", fontWeight: 600, letterSpacing: "0.04em" }}>LAYK</span>
                   </div>
-
-                  {/* Stats chips */}
-                  <div className="flex items-center gap-2 flex-wrap">
-                    {p.likes_est != null && (
-                      <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg"
-                        style={{ background: "rgba(244,114,182,0.1)", border: "1px solid rgba(244,114,182,0.2)" }}>
-                        <Heart size={12} style={{ color: "#f472b6" }} />
-                        <span className="text-xs font-semibold tabular-nums" style={{ color: "#f7f8f8" }}>
-                          {formatNumber(p.likes_est)}
-                        </span>
-                      </div>
-                    )}
-                    {p.comments_est != null && (
-                      <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg"
-                        style={{ background: "rgba(96,165,250,0.1)", border: "1px solid rgba(96,165,250,0.2)" }}>
-                        <MessageCircle size={12} style={{ color: "#60a5fa" }} />
-                        <span className="text-xs font-semibold tabular-nums" style={{ color: "#f7f8f8" }}>
-                          {formatNumber(p.comments_est)}
-                        </span>
-                      </div>
-                    )}
-                    {p.views_est != null && (
-                      <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg"
-                        style={{ background: "rgba(165,163,255,0.1)", border: "1px solid rgba(165,163,255,0.2)" }}>
-                        <Eye size={12} style={{ color: "#a5a3ff" }} />
-                        <span className="text-xs font-semibold tabular-nums" style={{ color: "#f7f8f8" }}>
-                          {formatNumber(p.views_est)}
-                        </span>
-                      </div>
-                    )}
+                )}
+                {p.comments_est != null && (
+                  <div className="flex flex-col gap-1 rounded-xl p-3"
+                    style={{ background: "rgba(96,165,250,0.08)", border: "1px solid rgba(96,165,250,0.18)" }}>
+                    <MessageCircle size={16} style={{ color: "#60a5fa" }} />
+                    <span className="font-bold tabular-nums" style={{ fontSize: 20, color: "#f7f8f8", letterSpacing: "-0.03em" }}>
+                      {formatNumber(p.comments_est)}
+                    </span>
+                    <span style={{ fontSize: 11, color: "#60a5fa", fontWeight: 600, letterSpacing: "0.04em" }}>IZOH</span>
                   </div>
-
-                  {/* ER bar */}
-                  <ERBar score={p.engagement_score} />
+                )}
+                {p.views_est != null && (
+                  <div className="flex flex-col gap-1 rounded-xl p-3"
+                    style={{ background: "rgba(165,163,255,0.08)", border: "1px solid rgba(165,163,255,0.18)" }}>
+                    <Eye size={16} style={{ color: "#a5a3ff" }} />
+                    <span className="font-bold tabular-nums" style={{ fontSize: 20, color: "#f7f8f8", letterSpacing: "-0.03em" }}>
+                      {formatNumber(p.views_est)}
+                    </span>
+                    <span style={{ fontSize: 11, color: "#a5a3ff", fontWeight: 600, letterSpacing: "0.04em" }}>KO'RISHLAR</span>
+                  </div>
+                )}
+                {/* ER tile */}
+                <div className="flex flex-col gap-1 rounded-xl p-3"
+                  style={{ background: `${color}14`, border: `1px solid ${color}30` }}>
+                  <TrendingUp size={16} style={{ color }} />
+                  <span className="font-bold tabular-nums" style={{ fontSize: 20, color: "#f7f8f8", letterSpacing: "-0.03em" }}>
+                    {p.engagement_score.toFixed(2)}
+                  </span>
+                  <span style={{ fontSize: 11, color, fontWeight: 600, letterSpacing: "0.04em" }}>ER SCORE</span>
                 </div>
+              </div>
 
-                {/* Expand chevron */}
-                <div className="flex-shrink-0 mt-1" style={{ color: "#62666d" }}>
-                  {isOpen
-                    ? <ChevronUp size={16} />
-                    : <ChevronDown size={16} />
-                  }
-                </div>
+              {/* Expand hint */}
+              <div className="flex items-center justify-center mt-4 gap-1.5" style={{ color: "#62666d" }}>
+                {isOpen ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+                <span style={{ fontSize: 12 }}>{isOpen ? "Yopish" : "Batafsil ko'rish"}</span>
               </div>
             </div>
 
