@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import {
   BarChart3, AlertCircle, PlayCircle, RefreshCw, Loader2,
   Hash, Zap, TrendingUp, MessageCircle, Heart, Eye,
-  Clock, Brain, Target, ChevronDown, ChevronUp, Flame,
+  Clock, Brain, Target, ChevronDown, ChevronUp, Flame, Instagram,
 } from "lucide-react";
 import { ContentFormatPie } from "@/components/charts/ContentFormatPie";
 import { EngagementTrendChart } from "@/components/charts/EngagementTrendChart";
@@ -231,55 +231,117 @@ function TopPostsList({ posts }: { posts: any[] }) {
         const color  = erColor(p.engagement_score);
         const hookColor = HOOK_COLORS[p.hook_type] ?? "bg-white/5 text-white/50 border-white/10";
 
+        // Use hook_text if available, otherwise first 120 chars of caption
+        const headline = p.hook_text
+          ? `"${p.hook_text}"`
+          : p.caption
+            ? p.caption.slice(0, 120) + (p.caption.length > 120 ? "…" : "")
+            : null;
+        // Only show full caption in expanded if it's longer than what's shown above
+        const showFullCaption = p.caption && (!p.hook_text ? p.caption.length > 120 : true);
+
         return (
           <div
             key={p.id}
-            className="rounded-2xl overflow-hidden cursor-pointer transition-all duration-150"
+            className="rounded-2xl overflow-hidden transition-all duration-150"
             style={{
               background: isOpen ? "rgba(255,255,255,0.045)" : "rgba(255,255,255,0.03)",
               border: `1px solid ${isOpen ? "rgba(255,255,255,0.14)" : "rgba(255,255,255,0.08)"}`,
             }}
-            onClick={() => setExpanded(isOpen ? null : p.id)}
           >
             {/* ── Main card ── */}
-            <div className="p-5 sm:p-6">
-              {/* Top row: rank + hook text + ER score */}
+            <div className="p-5 sm:p-6 cursor-pointer" onClick={() => setExpanded(isOpen ? null : p.id)}>
+              {/* Top row: thumbnail + rank + text + ER score */}
               <div className="flex items-start gap-4 mb-4">
 
-                {/* Rank badge */}
-                <div
-                  className="flex-shrink-0 flex items-center justify-center rounded-xl"
-                  style={{
-                    width: 52, height: 52,
-                    background: rank?.bg ?? "rgba(255,255,255,0.05)",
-                    border: `1px solid ${rank?.border ?? "rgba(255,255,255,0.1)"}`,
-                  }}
-                >
-                  {i < 3 ? (
-                    <span style={{ fontSize: 26, lineHeight: 1 }}>{rank!.emoji}</span>
+                {/* Thumbnail or rank badge */}
+                <div className="flex-shrink-0 relative" style={{ width: 64, height: 64 }}>
+                  {p.thumbnail_url ? (
+                    <>
+                      <img
+                        src={p.thumbnail_url}
+                        alt=""
+                        className="w-full h-full object-cover rounded-xl"
+                        style={{ border: "1px solid rgba(255,255,255,0.1)" }}
+                      />
+                      {/* Rank badge overlay */}
+                      <div
+                        className="absolute -top-2 -left-2 flex items-center justify-center rounded-lg"
+                        style={{
+                          width: 26, height: 26,
+                          background: rank?.bg ?? "rgba(255,255,255,0.1)",
+                          border: `1px solid ${rank?.border ?? "rgba(255,255,255,0.15)"}`,
+                          boxShadow: "0 2px 8px rgba(0,0,0,0.4)",
+                        }}
+                      >
+                        {i < 3
+                          ? <span style={{ fontSize: 14, lineHeight: 1 }}>{rank!.emoji}</span>
+                          : <span className="font-bold tabular-nums" style={{ fontSize: 11, color: "#8a8f98" }}>{i + 1}</span>
+                        }
+                      </div>
+                      {/* Open in Instagram button */}
+                      {p.post_url && (
+                        <a
+                          href={p.post_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={(e) => e.stopPropagation()}
+                          className="absolute inset-0 flex items-center justify-center rounded-xl opacity-0 hover:opacity-100 transition-opacity"
+                          style={{ background: "rgba(0,0,0,0.6)", backdropFilter: "blur(2px)" }}
+                          title="Instagramda ochish"
+                        >
+                          <Instagram size={22} style={{ color: "#fff" }} />
+                        </a>
+                      )}
+                    </>
                   ) : (
-                    <span className="font-bold tabular-nums" style={{ fontSize: 20, color: "#8a8f98" }}>
-                      {i + 1}
-                    </span>
+                    /* No thumbnail — show rank badge */
+                    <div
+                      className="w-full h-full flex items-center justify-center rounded-xl"
+                      style={{
+                        background: rank?.bg ?? "rgba(255,255,255,0.05)",
+                        border: `1px solid ${rank?.border ?? "rgba(255,255,255,0.1)"}`,
+                      }}
+                    >
+                      {i < 3
+                        ? <span style={{ fontSize: 28, lineHeight: 1 }}>{rank!.emoji}</span>
+                        : <span className="font-bold tabular-nums" style={{ fontSize: 22, color: "#8a8f98" }}>{i + 1}</span>
+                      }
+                    </div>
                   )}
                 </div>
 
-                {/* Hook text */}
-                <div className="flex-1 min-w-0 pt-1">
-                  {p.hook_text ? (
-                    <p className="font-semibold leading-snug" style={{ color: "#f7f8f8", fontSize: 16, letterSpacing: "-0.025em" }}>
-                      &ldquo;{p.hook_text}&rdquo;
+                {/* Headline text */}
+                <div className="flex-1 min-w-0 pt-0.5">
+                  {headline ? (
+                    <p className="font-semibold leading-snug" style={{ color: "#f7f8f8", fontSize: 15, letterSpacing: "-0.02em" }}>
+                      {headline}
                     </p>
                   ) : (
-                    <p style={{ color: "#62666d", fontSize: 15, fontStyle: "italic" }}>Caption mavjud emas</p>
+                    <p style={{ color: "#62666d", fontSize: 14, fontStyle: "italic" }}>Matn mavjud emas</p>
                   )}
-                  <p className="mt-1.5 font-medium" style={{ color: "#8a8f98", fontSize: 13 }}>
-                    @{p.competitor_handle}
-                  </p>
+                  <div className="flex items-center gap-2 mt-1.5">
+                    <p className="font-medium" style={{ color: "#8a8f98", fontSize: 13 }}>
+                      @{p.competitor_handle}
+                    </p>
+                    {p.post_url && (
+                      <a
+                        href={p.post_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={(e) => e.stopPropagation()}
+                        className="flex items-center gap-1 px-2 py-0.5 rounded-md transition-colors hover:opacity-80"
+                        style={{ background: "rgba(165,163,255,0.12)", border: "1px solid rgba(165,163,255,0.2)", color: "#a5a3ff", fontSize: 11, fontWeight: 600 }}
+                      >
+                        <Instagram size={11} />
+                        Ko'rish
+                      </a>
+                    )}
+                  </div>
                 </div>
 
                 {/* ER score — big & bold */}
-                <div className="flex-shrink-0 text-right pt-1">
+                <div className="flex-shrink-0 text-right">
                   <div className="font-bold tabular-nums leading-none" style={{ fontSize: 28, color, letterSpacing: "-0.04em" }}>
                     {p.engagement_score.toFixed(2)}
                   </div>
@@ -426,13 +488,13 @@ function TopPostsList({ posts }: { posts: any[] }) {
                   </div>
                 )}
 
-                {p.caption && (
+                {showFullCaption && (
                   <div>
                     <p className="text-xs font-semibold mb-2 uppercase tracking-wide" style={{ color: "#8a8f98" }}>
                       To'liq caption
                     </p>
                     <p className="text-sm leading-relaxed" style={{ color: "#62666d" }}>
-                      {p.caption.slice(0, 400)}{p.caption.length > 400 ? "…" : ""}
+                      {p.caption!.slice(0, 500)}{p.caption!.length > 500 ? "…" : ""}
                     </p>
                   </div>
                 )}

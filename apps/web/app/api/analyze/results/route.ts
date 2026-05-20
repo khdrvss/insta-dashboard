@@ -118,6 +118,7 @@ export async function GET() {
         views_est: p.viewsEst,
         hashtags: safeParseArray(p.hashtags).slice(0, 8),
         thumbnail_url: p.thumbnailUrl,
+        post_url: p.videoUrl ?? (p.externalId ? `https://www.instagram.com/p/${p.externalId}/` : null),
         posted_at: p.postedAt,
       }))
     )
